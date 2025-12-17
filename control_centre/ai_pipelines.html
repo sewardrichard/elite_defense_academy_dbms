@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pipelines // Elite Defense Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Roboto+Mono:wght@400;500&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="action-bar" style="max-width: 1400px; margin: 0 auto 10px auto;">
+        <button class="btn-print" onclick="window.print()">[ Print / Save PDF ]</button>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Elite Defense Academy</h1>
+                <div class="subtitle">Student Records Management System // Strategic Plan</div>
+            </div>
+            <div class="status-panel">
+                <div>PROJECT STATUS: <span style="color: var(--accent-gold);">INITIATION</span></div>
+                <div>SEC CLEARANCE: UNCLASSIFIED</div>
+                <div>DATE: 2026-01-15</div>
+            </div>
+        </header>
+
+        <nav class="nav-tabs">
+            <a href="military_index.html" class="nav-tab">01_Overview</a>
+            <a href="database.html" class="nav-tab">02_Database</a>
+            <a href="ai_pipelines.html" class="nav-tab active">03_AI_Pipelines</a>
+            <a href="mission_command.html" class="nav-tab">04_Mission_Command</a>
+            <a href="tech_stack.html" class="nav-tab">05_Tech_Stack</a>
+            <a href="future_ops.html" class="nav-tab">06_Future_Ops</a>
+        </nav>
+
+        <div class="content">
+            <div id="ai-pipelines" class="tab-content active" style="display: block;">
+                <h2>03 // AI Integration Strategy</h2>
+
+                <div class="diagram-box">
+                    <strong>DATA FLOW ARCHITECTURE</strong><br><br>
+                    <span class="diagram-step">PostgreSQL DB</span>
+                    → <span class="diagram-step">Python ETL</span>
+                    → <span class="diagram-step">ML Models</span>
+                    → <span class="diagram-step">Command Dashboard</span>
+                </div>
+
+                <h3>Target Use Cases</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>1. Attrition Prediction</h4>
+                        <span class="badge badge-danger">High Priority</span>
+                        <p style="margin-top:10px;"><strong>Goal:</strong> Identify cadets likely to drop out.</p>
+                        <p><strong>Model:</strong> Random Forest Classifier.</p>
+                        <p><strong>Features:</strong> PT scores, attendance variance, disciplinary count.</p>
+                    </div>
+                    <div class="card">
+                        <h4>2. Course Recommendation</h4>
+                        <span class="badge badge-info">Optimization</span>
+                        <p style="margin-top:10px;"><strong>Goal:</strong> Suggest optimal training paths.</p>
+                        <p><strong>Model:</strong> Collaborative Filtering.</p>
+                        <p><strong>Logic:</strong> Based on MOS requirements and historical success rates.</p>
+                    </div>
+                    <div class="card">
+                        <h4>3. NLP Reporting</h4>
+                        <span class="badge badge-success">Automation</span>
+                        <p style="margin-top:10px;"><strong>Goal:</strong> Auto-generate performance summaries.</p>
+                        <p><strong>Tech:</strong> OpenAI API / LLM.</p>
+                        <p><strong>Input:</strong> Raw score data -> <strong>Output:</strong> Narrative text.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

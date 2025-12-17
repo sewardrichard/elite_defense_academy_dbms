@@ -1,0 +1,6 @@
+company_id,company_code,company_name,commanding_officer,max_strength
+1,ALPHA-CO,ALPHA Company,Cpt. Grant,100
+2,BRAVO-CO,BRAVO Company,Cpt. Brewer,100
+3,CHARLIE-CO,CHARLIE Company,Cpt. Woods,100
+4,DELTA-CO,DELTA Company,Cpt. Thompson,100
+5,ECHO-CO,ECHO Company,Cpt. Smith,100

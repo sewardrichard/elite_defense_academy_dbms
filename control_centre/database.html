@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database // Elite Defense Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Roboto+Mono:wght@400;500&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="action-bar" style="max-width: 1400px; margin: 0 auto 10px auto;">
+        <button class="btn-print" onclick="window.print()">[ Print / Save PDF ]</button>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Elite Defense Academy</h1>
+                <div class="subtitle">Student Records Management System // Strategic Plan</div>
+            </div>
+            <div class="status-panel">
+                <div>PROJECT STATUS: <span style="color: var(--accent-gold);">INITIATION</span></div>
+                <div>SEC CLEARANCE: UNCLASSIFIED</div>
+                <div>DATE: 2026-01-15</div>
+            </div>
+        </header>
+
+        <nav class="nav-tabs">
+            <a href="military_index.html" class="nav-tab">01_Overview</a>
+            <a href="database.html" class="nav-tab active">02_Database</a>
+            <a href="ai_pipelines.html" class="nav-tab">03_AI_Pipelines</a>
+            <a href="mission_command.html" class="nav-tab">04_Mission_Command</a>
+            <a href="tech_stack.html" class="nav-tab">05_Tech_Stack</a>
+            <a href="future_ops.html" class="nav-tab">06_Future_Ops</a>
+        </nav>
+
+        <div class="content">
+            <div id="database" class="tab-content active" style="display: block;">
+                <h2>02 // Database Architecture & Intelligence</h2>
+
+                <!-- 1. Strategic Requirements -->
+                <div class="mission-header">
+                    <h3>2.1 STRATEGIC BUSINESS REQUIREMENTS</h3>
+                    <span class="badge badge-info">CLASSIFIED</span>
+                </div>
+                <div class="grid">
+                    <div class="card">
+                        <h4>1. Organizational Structure (Companies)</h4>
+                        <p>Segment cadets into tactical units (Companies) under specific Commanding Officers. Enables
+                            unit-level strength reporting and competitive performance tracking.</p>
+                    </div>
+                    <div class="card">
+                        <h4>2. Personnel & Training Service</h4>
+                        <p>Maintain immutable Service Records linking cadets to Training Modules. Enforce strict 3NF
+                            Many-to-Many relationships with grade letters, numeric scores, and completion status.</p>
+                    </div>
+                    <div class="card">
+                        <h4>3. Real-time Accountability (Muster)</h4>
+                        <p>Track daily attendance (Muster Rolls) for every training session. Flag "Late" or "AWOL"
+                            status immediately to impact discipline scores and predicted attrition risk.</p>
+                    </div>
+                    <div class="card">
+                        <h4>4. Predictive Intelligence (AI)</h4>
+                        <p>Aggregate academic performance, physical stats, and attendance into a "Cadet Performance
+                            Summary" and run "Attrition Risk" models to identify at-risk personnel.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Visual ERD -->
+                <div class="mission-header">
+                    <h3>2.2 ENTITY RELATIONSHIP DIAGRAM (ERD)</h3>
+                    <span class="badge badge-success">LIVE RENDER</span>
+                </div>
+
+                <!-- Static ERD Image -->
+                <div
+                    style="background: var(--slate-900); padding: 20px; border: 1px solid var(--slate-700); border-radius: 4px; overflow-x: auto; margin-bottom: 40px; text-align: center;">
+                    <img src="img/erdiagram_elite.svg" alt="Entity Relationship Diagram"
+                        style="max-width: 100%; height: auto; border: 1px solid var(--accent-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);">
+                </div>
+
+                <!-- 3. Detailed Schema Specs -->
+                <div class="mission-header">
+                    <h3>2.3 FULL SCHEMA SPECIFICATIONS</h3>
+                </div>
+
+                <h3>A. Core Operational Tables</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>1. COMPANIES</h4>
+                        <ul>
+                            <li><strong>company_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>company_code</strong>: Unique (e.g., 'A-CO').</li>
+                            <li><strong>commanding_officer</strong>: Text.</li>
+                            <li><strong>max_strength</strong>: Integer capacity.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>2. CADETS</h4>
+                        <ul>
+                            <li><strong>cadet_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>service_number</strong>: Unique UUID/String.</li>
+                            <li><strong>company_id (FK)</strong>: Links to Companies.</li>
+                            <li><strong>rank</strong>: Enum (Recruit...Lieutenant).</li>
+                            <li><strong>status</strong>: Active/Medical/Discharged.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>3. TRAINING_MODULES</h4>
+                        <ul>
+                            <li><strong>module_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>department</strong>: Cyber/Tactical/Strategic.</li>
+                            <li><strong>credits</strong>: Credit value (>0).</li>
+                            <li><strong>difficulty</strong>: Basic/Advanced/Elite.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>4. SERVICE_RECORDS</h4>
+                        <ul>
+                            <li><strong>record_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>cadet_id (FK)</strong> + <strong>module_id (FK)</strong>: Unique Pair.</li>
+                            <li><strong>final_score</strong>: 0.00 - 100.00.</li>
+                            <li><strong>grade_letter</strong>: A/B/C/D/F.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>B. Assessment & Analytics Tables</h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>5. PERFORMANCE_EVALS</h4>
+                        <ul>
+                            <li><strong>eval_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>record_id (FK)</strong>: Links to Service Record.</li>
+                            <li><strong>assessment_type</strong>: Exam/Practical/Drill.</li>
+                            <li><strong>score</strong>: 0.00 - 100.00.</li>
+                            <li><strong>weight</strong>: Impact factor (0.0-1.0).</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>6. MUSTER_ROLLS</h4>
+                        <ul>
+                            <li><strong>roll_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>cadet_id (FK)</strong> + <strong>module_id (FK)</strong> +
+                                <strong>date</strong>: Unique.
+                            </li>
+                            <li><strong>status</strong>: Present/Absent/Late/AWOL.</li>
+                            <li><strong>check_in_time</strong>: Timestamp.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>7. CADET_PERFORMANCE_SUMMARY</h4>
+                        <ul>
+                            <li><strong>summary_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>cadet_id (FK)</strong>: Unique (One-to-One).</li>
+                            <li><strong>overall_gpa</strong>: 0.00 - 4.00.</li>
+                            <li><strong>attendance_rate</strong>: 0 - 100%.</li>
+                            <li><strong>performance_tier</strong>: Elite/Standard/At-Risk.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>8. ATTRITION_RISK</h4>
+                        <ul>
+                            <li><strong>risk_id (PK)</strong>: Serial Integer.</li>
+                            <li><strong>cadet_id (FK)</strong>: Subject.</li>
+                            <li><strong>risk_score</strong>: 0-100 Probability.</li>
+                            <li><strong>risk_factors</strong>: JSON (Flex structure).</li>
+                            <li><strong>risk_level</strong>: Critical/High/Medium/Low.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 4. 3NF Verification -->
+                <div class="mission-header">
+                    <h3>2.4 NORMALIZATION VERIFICATION (3NF)</h3>
+                    <span class="badge badge-success">VERIFIED</span>
+                </div>
+
+                <div
+                    style="background: var(--slate-100); border-left: 4px solid var(--accent-gold); padding: 20px; margin-bottom: 30px;">
+                    <p style="font-family: var(--font-mono); margin-bottom: 10px;"><strong>>> INTEL REPORT:</strong>
+                        DATABASE NORMALIZATION STATUS</p>
+                    <p>This schema has been formally verified against the three normal forms (1NF, 2NF, 3NF) to ensure
+                        data integrity, reduce redundancy, and prevent update anomalies.</p>
+                </div>
+
+                <div class="grid">
+                    <div class="card" style="border-left: 4px solid #22c55e;">
+                        <h4>✅ 1st Normal Form (1NF)</h4>
+                        <p><strong>Requirement:</strong> All columns contain atomic (indivisible) values. No repeating
+                            groups.</p>
+                        <hr style="margin: 10px 0; border-color: var(--slate-200);">
+                        <p><strong>Evidence:</strong></p>
+                        <ul>
+                            <li>Every column stores a single value (e.g., <code>first_name</code>, <code>score</code>).
+                            </li>
+                            <li>No arrays or lists stored in columns (except <code>risk_factors</code> JSON, a
+                                deliberate analytics choice).</li>
+                            <li>Each table has a unique Primary Key (<code>cadet_id</code>, <code>module_id</code>,
+                                etc.).</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #22c55e;">
+                        <h4>✅ 2nd Normal Form (2NF)</h4>
+                        <p><strong>Requirement:</strong> Must be in 1NF + All non-key attributes must depend on the
+                            <em>entire</em> primary key (no partial dependencies).
+                        </p>
+                        <hr style="margin: 10px 0; border-color: var(--slate-200);">
+                        <p><strong>Evidence:</strong></p>
+                        <ul>
+                            <li>All tables use <strong>single-column surrogate keys</strong> (e.g.,
+                                <code>cadet_id</code>), eliminating partial dependency risk.
+                            </li>
+                            <li>In <code>service_records</code>, the composite unique constraint (<code>cadet_id</code>,
+                                <code>module_id</code>) is for uniqueness, not the PK. <code>final_score</code> and
+                                <code>status</code> describe the <em>enrollment</em>, not just the cadet or module.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid #22c55e;">
+                        <h4>✅ 3rd Normal Form (3NF)</h4>
+                        <p><strong>Requirement:</strong> Must be in 2NF + No transitive dependencies (non-key column
+                            depending on another non-key column).</p>
+                        <hr style="margin: 10px 0; border-color: var(--slate-200);">
+                        <p><strong>Evidence:</strong></p>
+                        <ul>
+                            <li><code>cadets.company_id</code> is a <strong>Foreign Key</strong>, not a stored copy of
+                                company data. <code>company_name</code> lives only in <code>companies</code>.</li>
+                            <li>No column in <code>cadets</code> depends on <code>rank</code> or <code>status</code>;
+                                these are independent facts.</li>
+                            <li><code>grade_letter</code> is derived from <code>final_score</code> via a consistent rule
+                                (not transitive).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Strategic Denormalization (Analytics Tables)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Table</th>
+                            <th>Rationale</th>
+                            <th>Trade-off</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>cadet_performance_summary</code></td>
+                            <td>Pre-calculated aggregates (GPA, attendance) for fast dashboard queries.</td>
+                            <td>Requires scheduled ETL refresh; acceptable for read-heavy analytics.</td>
+                        </tr>
+                        <tr>
+                            <td><code>attrition_risk.risk_factors</code></td>
+                            <td>JSON stores flexible, evolving ML features without schema changes.</td>
+                            <td>Not queryable via standard SQL JOINs; queried via JSON operators.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 5. Synthetic Data Generation -->
+                <div class="mission-header">
+                    <h3>2.5 SYNTHETIC DATA GENERATION (Faker)</h3>
+                    <span class="badge badge-info">ETL PHASE</span>
+                </div>
+
+                <div
+                    style="background: var(--slate-100); border-left: 4px solid var(--accent-blue); padding: 20px; margin-bottom: 30px;">
+                    <p style="font-family: var(--font-mono); margin-bottom: 10px;"><strong>>> DATAGEN PROTOCOL:</strong>
+                        FAKER LIBRARY INTEGRATION</p>
+                    <p>To populate the database with realistic test data, we use the <strong>Python Faker
+                            library</strong> to generate synthetic personnel records, training modules, and performance
+                        metrics. This enables testing without requiring actual cadet data.</p>
+                </div>
+
+                <h3>Implementation: <code>scripts/generate_data.py</code></h3>
+                <div class="grid">
+                    <div class="card">
+                        <h4>Configuration</h4>
+                        <pre
+                            style="background: var(--slate-900); color: #e2e8f0; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 0.85rem;"><code>from faker import Faker
+
+fake = Faker()
+Faker.seed(2025)  # Reproducible results
+
+NUM_COMPANIES = 5
+NUM_CADETS = 300
+NUM_MODULES = 15</code></pre>
+                    </div>
+                    <div class="card">
+                        <h4>Key Faker Methods Used</h4>
+                        <ul>
+                            <li><code>fake.first_name()</code> - Generate realistic first names</li>
+                            <li><code>fake.last_name()</code> - Generate realistic last names</li>
+                            <li><code>fake.date_of_birth(min=18, max=24)</code> - Age-appropriate DOBs</li>
+                            <li><code>fake.date_between()</code> - Enrollment dates within range</li>
+                            <li><code>random.choice()</code> - Weighted selection for ranks/status</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Cadet Generation Logic</h3>
+                <pre
+                    style="background: var(--slate-900); color: #e2e8f0; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; margin-bottom: 30px;"><code>def generate_cadets():
+    for i in range(NUM_CADETS):
+        first = fake.first_name()
+        last = fake.last_name()
+        company = random.choice(companies_data)
+        
+        row = {
+            'cadet_id': i + 1,
+            'service_number': f"SN-2025-{str(i+1).zfill(3)}",
+            'first_name': first,
+            'last_name': last,
+            'email': f"{first.lower()}.{last.lower()}@elite.mil",
+            'dob': fake.date_of_birth(minimum_age=18, maximum_age=24),
+            'enrollment_date': fake.date_between(start_date='-2y', end_date='today'),
+            'rank': random.choice(['Recruit', 'Recruit', 'Private', 'Corporal']),
+            'company_id': company['company_id'],
+            'status': random.choice(['Active', 'Active', 'Active', 'Medical Leave'])
+        }</code></pre>
+
+                <h3>Output Files Generated</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Records</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>data/raw/companies.csv</code></td>
+                            <td>5</td>
+                            <td>Organizational units (Alpha, Bravo, Charlie...)</td>
+                        </tr>
+                        <tr>
+                            <td><code>data/raw/cadets.csv</code></td>
+                            <td>300</td>
+                            <td>Personnel records with names, ranks, assignments</td>
+                        </tr>
+                        <tr>
+                            <td><code>data/raw/training_modules.csv</code></td>
+                            <td>15</td>
+                            <td>Course catalog (Cyber, Tactical, Medical...)</td>
+                        </tr>
+                        <tr>
+                            <td><code>data/raw/service_records.csv</code></td>
+                            <td>~1200</td>
+                            <td>Enrollment records (3-6 modules per cadet)</td>
+                        </tr>
+                        <tr>
+                            <td><code>data/raw/performance_evals.csv</code></td>
+                            <td>~4000</td>
+                            <td>Individual assessment scores</td>
+                        </tr>
+                        <tr>
+                            <td><code>data/raw/attrition_risk.csv</code></td>
+                            <td>300</td>
+                            <td>Risk predictions with JSON factors</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="background: var(--slate-900); padding: 15px; border-radius: 4px; margin-top: 20px;">
+                    <p style="font-family: var(--font-mono); color: #22c55e; margin: 0;"><strong>$ python
+                            scripts/generate_data.py</strong></p>
+                    <p style="font-family: var(--font-mono); color: #94a3b8; margin: 5px 0 0 0; font-size: 0.85rem;">
+                        [SUCCESS] Generated 6 related CSV files in data/raw/</p>
+                </div>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <a href="#"
+                        style="color: var(--accent-red); font-family: var(--font-mono); text-decoration: none;">[ VIEW
+                        FULL SQL SOURCE: sql/01_schema.sql ]</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,301 @@
+cadet_id,service_number,first_name,last_name,email,dob,enrollment_date,rank,company_id,status
+1,SN-2025-001,Teresa,Hudson,teresa.hudson@elite.mil,2001-07-08,2024-10-08,Recruit,5,Medical Leave
+2,SN-2025-002,Richard,Williams,richard.williams@elite.mil,2007-06-26,2024-05-28,Corporal,2,Active
+3,SN-2025-003,Tina,Garcia,tina.garcia@elite.mil,2001-05-17,2025-04-04,Private,3,Active
+4,SN-2025-004,Anthony,Dixon,anthony.dixon@elite.mil,2007-08-01,2025-11-14,Private,1,Medical Leave
+5,SN-2025-005,James,Lopez,james.lopez@elite.mil,2006-12-25,2024-06-10,Recruit,1,Active
+6,SN-2025-006,Tina,Bentley,tina.bentley@elite.mil,2006-05-23,2024-10-19,Private,2,Active
+7,SN-2025-007,Samantha,Gomez,samantha.gomez@elite.mil,2001-03-21,2025-03-22,Recruit,4,Active
+8,SN-2025-008,Daniel,Gonzalez,daniel.gonzalez@elite.mil,2001-12-29,2024-06-22,Corporal,5,Active
+9,SN-2025-009,Catherine,Wilson,catherine.wilson@elite.mil,2002-02-11,2025-02-17,Recruit,2,Active
+10,SN-2025-010,Tanya,Miller,tanya.miller@elite.mil,2005-12-11,2024-12-07,Private,2,Medical Leave
+11,SN-2025-011,Kathy,Ramos,kathy.ramos@elite.mil,2005-11-13,2024-04-30,Corporal,3,Active
+12,SN-2025-012,Lynn,Nguyen,lynn.nguyen@elite.mil,2004-10-03,2025-01-31,Recruit,5,Active
+13,SN-2025-013,Lauren,Bryant,lauren.bryant@elite.mil,2006-10-30,2024-02-10,Recruit,2,Active
+14,SN-2025-014,Katherine,Hart,katherine.hart@elite.mil,2006-07-12,2025-11-09,Recruit,5,Active
+15,SN-2025-015,Brenda,Chang,brenda.chang@elite.mil,2006-02-28,2025-09-28,Corporal,2,Active
+16,SN-2025-016,John,Perez,john.perez@elite.mil,2005-06-23,2025-03-25,Corporal,1,Medical Leave
+17,SN-2025-017,Larry,Dickerson,larry.dickerson@elite.mil,2003-10-10,2024-07-31,Private,3,Active
+18,SN-2025-018,Michael,Grant,michael.grant@elite.mil,2006-08-18,2025-09-19,Corporal,3,Medical Leave
+19,SN-2025-019,Joshua,Hill,joshua.hill@elite.mil,2006-05-22,2025-11-10,Private,5,Medical Leave
+20,SN-2025-020,Eddie,Bell,eddie.bell@elite.mil,2007-03-02,2025-04-13,Corporal,1,Medical Leave
+21,SN-2025-021,Amy,Lawrence,amy.lawrence@elite.mil,2005-09-02,2025-03-03,Recruit,5,Active
+22,SN-2025-022,Eric,Stark,eric.stark@elite.mil,2003-11-17,2025-01-18,Recruit,5,Active
+23,SN-2025-023,John,Chapman,john.chapman@elite.mil,2005-04-03,2025-11-12,Corporal,2,Active
+24,SN-2025-024,Ashley,Mcdaniel,ashley.mcdaniel@elite.mil,2002-09-16,2024-05-24,Private,2,Active
+25,SN-2025-025,Jamie,Thomas,jamie.thomas@elite.mil,2004-09-23,2025-10-09,Private,3,Active
+26,SN-2025-026,Ashley,Duran,ashley.duran@elite.mil,2003-02-26,2025-01-15,Recruit,5,Active
+27,SN-2025-027,Alexander,Perkins,alexander.perkins@elite.mil,2002-08-15,2025-12-11,Private,5,Active
+28,SN-2025-028,Douglas,Jackson,douglas.jackson@elite.mil,2006-09-30,2024-06-18,Private,1,Active
+29,SN-2025-029,Jessica,Green,jessica.green@elite.mil,2002-02-13,2025-07-05,Private,5,Active
+30,SN-2025-030,Courtney,Figueroa,courtney.figueroa@elite.mil,2002-03-28,2024-10-17,Recruit,5,Active
+31,SN-2025-031,Stacey,Perez,stacey.perez@elite.mil,2007-05-08,2024-11-30,Recruit,5,Medical Leave
+32,SN-2025-032,Laura,Jones,laura.jones@elite.mil,2005-04-18,2024-04-13,Recruit,1,Active
+33,SN-2025-033,John,Barnes,john.barnes@elite.mil,2007-10-05,2025-06-15,Recruit,2,Active
+34,SN-2025-034,Laurie,Leonard,laurie.leonard@elite.mil,2005-12-18,2025-02-20,Corporal,4,Active
+35,SN-2025-035,Jeremy,Mercado,jeremy.mercado@elite.mil,2003-12-17,2025-07-01,Corporal,3,Active
+36,SN-2025-036,Jennifer,Black,jennifer.black@elite.mil,2004-02-06,2025-01-20,Corporal,1,Medical Leave
+37,SN-2025-037,Thomas,Green,thomas.green@elite.mil,2001-07-11,2025-12-08,Recruit,2,Active
+38,SN-2025-038,Edward,Quinn,edward.quinn@elite.mil,2004-10-25,2025-04-08,Private,2,Active
+39,SN-2025-039,Ronald,Williamson,ronald.williamson@elite.mil,2003-10-10,2024-08-29,Private,2,Active
+40,SN-2025-040,David,Fuller,david.fuller@elite.mil,2003-01-28,2025-10-14,Private,2,Active
+41,SN-2025-041,Rebecca,Moore,rebecca.moore@elite.mil,2001-12-03,2024-08-31,Private,5,Active
+42,SN-2025-042,Jesse,Hernandez,jesse.hernandez@elite.mil,2006-07-01,2024-05-06,Corporal,1,Active
+43,SN-2025-043,Holly,Sims,holly.sims@elite.mil,2001-10-28,2024-05-06,Private,2,Active
+44,SN-2025-044,Jose,Skinner,jose.skinner@elite.mil,2006-03-08,2024-01-31,Corporal,5,Active
+45,SN-2025-045,Melissa,Smith,melissa.smith@elite.mil,2005-12-05,2024-03-19,Private,1,Active
+46,SN-2025-046,Lisa,Vargas,lisa.vargas@elite.mil,2003-10-27,2025-07-26,Corporal,3,Medical Leave
+47,SN-2025-047,Kenneth,Gregory,kenneth.gregory@elite.mil,2006-02-14,2024-07-11,Private,3,Active
+48,SN-2025-048,James,Brown,james.brown@elite.mil,2004-05-08,2025-02-20,Private,2,Medical Leave
+49,SN-2025-049,Brenda,Espinoza,brenda.espinoza@elite.mil,2003-05-17,2025-02-24,Private,5,Medical Leave
+50,SN-2025-050,Joseph,Stewart,joseph.stewart@elite.mil,2003-04-25,2024-12-06,Private,3,Active
+51,SN-2025-051,Colleen,Little,colleen.little@elite.mil,2006-07-16,2024-01-27,Corporal,2,Active
+52,SN-2025-052,Michael,Molina,michael.molina@elite.mil,2007-04-07,2025-09-13,Recruit,3,Active
+53,SN-2025-053,Tara,Silva,tara.silva@elite.mil,2005-08-30,2024-04-09,Recruit,2,Medical Leave
+54,SN-2025-054,Heather,Warner,heather.warner@elite.mil,2001-10-20,2025-09-19,Corporal,2,Active
+55,SN-2025-055,Donna,Myers,donna.myers@elite.mil,2003-12-07,2024-11-04,Recruit,1,Active
+56,SN-2025-056,Brandon,Davis,brandon.davis@elite.mil,2007-08-05,2024-07-26,Corporal,3,Active
+57,SN-2025-057,Christopher,Garcia,christopher.garcia@elite.mil,2005-06-03,2024-11-11,Corporal,1,Active
+58,SN-2025-058,Travis,Wood,travis.wood@elite.mil,2001-09-26,2024-06-29,Corporal,5,Active
+59,SN-2025-059,Danny,Love,danny.love@elite.mil,2007-05-31,2025-01-21,Recruit,3,Active
+60,SN-2025-060,Anthony,Kirby,anthony.kirby@elite.mil,2005-08-04,2025-06-10,Private,5,Active
+61,SN-2025-061,Steve,Parker,steve.parker@elite.mil,2003-11-21,2024-07-03,Private,1,Medical Leave
+62,SN-2025-062,Jordan,Craig,jordan.craig@elite.mil,2000-12-19,2025-06-27,Corporal,3,Active
+63,SN-2025-063,Claudia,Stewart,claudia.stewart@elite.mil,2006-06-25,2024-07-01,Recruit,3,Active
+64,SN-2025-064,Brandon,Barnett,brandon.barnett@elite.mil,2007-01-27,2024-08-08,Recruit,4,Active
+65,SN-2025-065,Kevin,Graham,kevin.graham@elite.mil,2002-05-30,2025-10-09,Corporal,1,Medical Leave
+66,SN-2025-066,Jessica,English,jessica.english@elite.mil,2005-08-09,2024-08-29,Recruit,5,Active
+67,SN-2025-067,Carolyn,Holland,carolyn.holland@elite.mil,2002-02-13,2024-04-12,Private,4,Active
+68,SN-2025-068,Cheyenne,Young,cheyenne.young@elite.mil,2001-03-12,2025-05-10,Recruit,4,Active
+69,SN-2025-069,Tyrone,Alvarez,tyrone.alvarez@elite.mil,2002-07-13,2024-05-20,Recruit,3,Active
+70,SN-2025-070,Joel,Tyler,joel.tyler@elite.mil,2001-11-19,2024-11-02,Private,5,Medical Leave
+71,SN-2025-071,Jessica,Campbell,jessica.campbell@elite.mil,2001-12-20,2025-05-31,Private,5,Active
+72,SN-2025-072,Joshua,Nelson,joshua.nelson@elite.mil,2001-06-12,2024-11-05,Recruit,3,Active
+73,SN-2025-073,Lisa,Spencer,lisa.spencer@elite.mil,2004-02-24,2025-05-03,Corporal,3,Active
+74,SN-2025-074,Courtney,Robinson,courtney.robinson@elite.mil,2001-05-04,2025-01-19,Corporal,2,Medical Leave
+75,SN-2025-075,Rachel,Martinez,rachel.martinez@elite.mil,2005-02-15,2024-07-29,Recruit,3,Active
+76,SN-2025-076,Peter,Williams,peter.williams@elite.mil,2003-07-03,2024-03-30,Private,3,Active
+77,SN-2025-077,Andrew,Bell,andrew.bell@elite.mil,2002-03-21,2024-07-10,Recruit,4,Active
+78,SN-2025-078,Keith,Pope,keith.pope@elite.mil,2001-02-01,2024-03-22,Private,3,Active
+79,SN-2025-079,Teresa,Dorsey,teresa.dorsey@elite.mil,2006-10-31,2023-12-23,Recruit,1,Active
+80,SN-2025-080,Donald,Moore,donald.moore@elite.mil,2007-06-07,2025-11-14,Private,3,Active
+81,SN-2025-081,Christine,Bentley,christine.bentley@elite.mil,2001-10-10,2025-02-13,Private,2,Active
+82,SN-2025-082,Brett,Goodwin,brett.goodwin@elite.mil,2005-09-06,2024-04-13,Private,5,Active
+83,SN-2025-083,Emily,Brown,emily.brown@elite.mil,2003-09-09,2024-05-22,Recruit,2,Active
+84,SN-2025-084,Cynthia,Martinez,cynthia.martinez@elite.mil,2005-11-13,2025-06-25,Recruit,3,Medical Leave
+85,SN-2025-085,Robert,Sanchez,robert.sanchez@elite.mil,2003-10-01,2025-10-24,Private,4,Active
+86,SN-2025-086,Angela,Montgomery,angela.montgomery@elite.mil,2003-07-20,2025-02-06,Recruit,2,Active
+87,SN-2025-087,Jason,Edwards,jason.edwards@elite.mil,2007-08-24,2025-04-25,Private,4,Active
+88,SN-2025-088,Eric,Mcdonald,eric.mcdonald@elite.mil,2004-02-01,2024-11-18,Private,1,Active
+89,SN-2025-089,Arthur,Thompson,arthur.thompson@elite.mil,2002-02-07,2025-12-12,Recruit,2,Medical Leave
+90,SN-2025-090,David,Lee,david.lee@elite.mil,2007-05-09,2024-01-22,Corporal,5,Active
+91,SN-2025-091,Lori,Turner,lori.turner@elite.mil,2006-07-08,2024-04-01,Recruit,4,Active
+92,SN-2025-092,Anne,Medina,anne.medina@elite.mil,2005-01-02,2025-01-12,Corporal,1,Active
+93,SN-2025-093,Robert,Nixon,robert.nixon@elite.mil,2006-05-08,2024-03-15,Private,3,Active
+94,SN-2025-094,Randy,Summers,randy.summers@elite.mil,2004-10-16,2024-03-24,Recruit,4,Active
+95,SN-2025-095,Lori,Bailey,lori.bailey@elite.mil,2007-09-18,2025-09-26,Recruit,3,Active
+96,SN-2025-096,Daniel,Lucas,daniel.lucas@elite.mil,2003-11-02,2024-03-05,Private,2,Active
+97,SN-2025-097,Brittany,Schneider,brittany.schneider@elite.mil,2003-03-06,2024-02-15,Private,3,Active
+98,SN-2025-098,Mary,Daniel,mary.daniel@elite.mil,2006-10-20,2025-07-06,Recruit,2,Active
+99,SN-2025-099,Nicole,Alvarado,nicole.alvarado@elite.mil,2003-06-05,2024-08-18,Recruit,1,Active
+100,SN-2025-100,Derek,Smith,derek.smith@elite.mil,2005-05-07,2025-11-20,Private,2,Active
+101,SN-2025-101,Sara,Jones,sara.jones@elite.mil,2005-10-03,2024-05-27,Corporal,1,Active
+102,SN-2025-102,Carla,Morgan,carla.morgan@elite.mil,2002-02-02,2025-02-01,Corporal,2,Active
+103,SN-2025-103,Jennifer,Gomez,jennifer.gomez@elite.mil,2006-07-30,2025-04-18,Recruit,1,Active
+104,SN-2025-104,Denise,Cook,denise.cook@elite.mil,2005-08-20,2024-06-28,Private,2,Active
+105,SN-2025-105,James,Singh,james.singh@elite.mil,2002-01-01,2024-12-09,Corporal,3,Medical Leave
+106,SN-2025-106,Jenna,Matthews,jenna.matthews@elite.mil,2001-05-24,2025-07-13,Recruit,4,Active
+107,SN-2025-107,Abigail,Parrish,abigail.parrish@elite.mil,2006-06-03,2025-09-06,Corporal,3,Active
+108,SN-2025-108,Craig,Graves,craig.graves@elite.mil,2002-10-12,2024-08-19,Recruit,5,Active
+109,SN-2025-109,Ian,Palmer,ian.palmer@elite.mil,2002-07-01,2024-10-19,Recruit,5,Active
+110,SN-2025-110,Todd,Campbell,todd.campbell@elite.mil,2007-05-23,2025-08-24,Recruit,3,Medical Leave
+111,SN-2025-111,Jacob,Jackson,jacob.jackson@elite.mil,2005-12-14,2025-10-31,Private,3,Active
+112,SN-2025-112,Danielle,Brown,danielle.brown@elite.mil,2001-04-13,2025-11-11,Recruit,2,Active
+113,SN-2025-113,Jennifer,Walsh,jennifer.walsh@elite.mil,2002-03-05,2024-03-15,Recruit,2,Active
+114,SN-2025-114,Cory,Potter,cory.potter@elite.mil,2006-01-01,2024-11-14,Recruit,3,Active
+115,SN-2025-115,Thomas,Martinez,thomas.martinez@elite.mil,2003-08-07,2024-07-31,Corporal,4,Medical Leave
+116,SN-2025-116,Ernest,Watson,ernest.watson@elite.mil,2001-06-11,2025-05-25,Corporal,4,Active
+117,SN-2025-117,Carla,Andrews,carla.andrews@elite.mil,2003-12-26,2025-09-23,Private,4,Medical Leave
+118,SN-2025-118,Kurt,Gonzales,kurt.gonzales@elite.mil,2003-05-25,2025-02-24,Recruit,2,Active
+119,SN-2025-119,Gina,Dyer,gina.dyer@elite.mil,2004-09-27,2025-08-25,Recruit,2,Active
+120,SN-2025-120,Rebecca,Santiago,rebecca.santiago@elite.mil,2006-09-23,2024-04-19,Corporal,1,Active
+121,SN-2025-121,Teresa,Williams,teresa.williams@elite.mil,2003-04-05,2025-11-20,Private,1,Active
+122,SN-2025-122,Jonathan,Lindsey,jonathan.lindsey@elite.mil,2002-10-03,2024-08-05,Private,3,Active
+123,SN-2025-123,Robert,Taylor,robert.taylor@elite.mil,2003-07-24,2024-03-02,Recruit,2,Medical Leave
+124,SN-2025-124,Joseph,Turner,joseph.turner@elite.mil,2006-05-01,2025-08-19,Recruit,5,Active
+125,SN-2025-125,Marcus,West,marcus.west@elite.mil,2007-07-06,2025-05-02,Recruit,5,Active
+126,SN-2025-126,Lynn,Black,lynn.black@elite.mil,2002-04-20,2024-12-25,Corporal,2,Active
+127,SN-2025-127,Michael,Davis,michael.davis@elite.mil,2004-07-28,2025-05-23,Corporal,3,Active
+128,SN-2025-128,Mathew,Lawrence,mathew.lawrence@elite.mil,2007-11-16,2024-03-13,Corporal,2,Active
+129,SN-2025-129,Emma,Mays,emma.mays@elite.mil,2005-09-18,2025-03-09,Private,1,Active
+130,SN-2025-130,Michael,Ward,michael.ward@elite.mil,2004-10-27,2024-06-07,Recruit,5,Active
+131,SN-2025-131,Leah,Byrd,leah.byrd@elite.mil,2001-01-10,2025-01-19,Recruit,1,Active
+132,SN-2025-132,Randall,Bullock,randall.bullock@elite.mil,2005-12-06,2024-04-05,Recruit,3,Medical Leave
+133,SN-2025-133,Gabrielle,Myers,gabrielle.myers@elite.mil,2003-09-23,2025-04-04,Private,2,Medical Leave
+134,SN-2025-134,Sherry,Anthony,sherry.anthony@elite.mil,2004-02-28,2025-05-05,Private,1,Active
+135,SN-2025-135,Stacy,Obrien,stacy.obrien@elite.mil,2004-09-13,2025-01-02,Recruit,2,Active
+136,SN-2025-136,Sara,Clark,sara.clark@elite.mil,2001-04-30,2025-02-13,Recruit,4,Active
+137,SN-2025-137,John,Boyd,john.boyd@elite.mil,2001-05-24,2024-12-07,Recruit,3,Active
+138,SN-2025-138,Mckenzie,Sandoval,mckenzie.sandoval@elite.mil,2001-04-16,2024-03-10,Private,1,Medical Leave
+139,SN-2025-139,Nicole,Wyatt,nicole.wyatt@elite.mil,2001-07-17,2025-02-03,Private,5,Medical Leave
+140,SN-2025-140,Jonathon,Berger,jonathon.berger@elite.mil,2004-12-14,2024-12-18,Recruit,5,Active
+141,SN-2025-141,Bradley,Bell,bradley.bell@elite.mil,2007-10-21,2024-12-13,Recruit,3,Active
+142,SN-2025-142,Jennifer,Taylor,jennifer.taylor@elite.mil,2003-01-30,2024-03-28,Recruit,3,Active
+143,SN-2025-143,Richard,Glass,richard.glass@elite.mil,2004-06-16,2025-02-10,Private,3,Active
+144,SN-2025-144,Shawn,Davis,shawn.davis@elite.mil,2007-03-23,2025-02-01,Private,4,Active
+145,SN-2025-145,Tina,Brooks,tina.brooks@elite.mil,2005-02-26,2024-11-06,Recruit,5,Active
+146,SN-2025-146,Joseph,Riggs,joseph.riggs@elite.mil,2002-12-21,2025-07-27,Recruit,4,Active
+147,SN-2025-147,Angela,Allen,angela.allen@elite.mil,2003-03-16,2024-10-21,Private,2,Active
+148,SN-2025-148,James,Ruiz,james.ruiz@elite.mil,2005-07-10,2025-05-09,Private,3,Active
+149,SN-2025-149,Billy,Parks,billy.parks@elite.mil,2001-04-20,2025-06-11,Private,2,Medical Leave
+150,SN-2025-150,Karen,Martin,karen.martin@elite.mil,2004-03-18,2024-11-05,Recruit,2,Active
+151,SN-2025-151,Aaron,Bryan,aaron.bryan@elite.mil,2005-08-01,2025-02-11,Private,1,Active
+152,SN-2025-152,Darrell,Morris,darrell.morris@elite.mil,2001-05-10,2024-04-30,Private,3,Medical Leave
+153,SN-2025-153,Regina,Torres,regina.torres@elite.mil,2005-04-22,2025-11-08,Private,1,Active
+154,SN-2025-154,James,Turner,james.turner@elite.mil,2004-12-19,2025-08-16,Private,4,Medical Leave
+155,SN-2025-155,Mikayla,Burke,mikayla.burke@elite.mil,2005-05-30,2025-08-31,Recruit,1,Medical Leave
+156,SN-2025-156,Daniel,Roberts,daniel.roberts@elite.mil,2006-02-13,2025-05-23,Corporal,3,Active
+157,SN-2025-157,Crystal,Cooper,crystal.cooper@elite.mil,2003-07-06,2024-03-26,Private,3,Active
+158,SN-2025-158,Sarah,White,sarah.white@elite.mil,2003-07-31,2024-06-20,Private,2,Medical Leave
+159,SN-2025-159,Tyler,Fleming,tyler.fleming@elite.mil,2003-11-04,2024-12-10,Private,2,Active
+160,SN-2025-160,Christy,Wilkerson,christy.wilkerson@elite.mil,2001-07-26,2024-12-18,Private,5,Active
+161,SN-2025-161,Lindsay,Jackson,lindsay.jackson@elite.mil,2007-11-27,2025-12-09,Corporal,4,Active
+162,SN-2025-162,David,Wolf,david.wolf@elite.mil,2001-06-29,2024-06-11,Private,1,Active
+163,SN-2025-163,Theresa,Fisher,theresa.fisher@elite.mil,2002-09-23,2025-02-23,Private,5,Medical Leave
+164,SN-2025-164,Monica,Bridges,monica.bridges@elite.mil,2002-03-03,2025-01-16,Private,5,Medical Leave
+165,SN-2025-165,David,Wilson,david.wilson@elite.mil,2003-08-29,2023-12-23,Recruit,5,Active
+166,SN-2025-166,David,Peters,david.peters@elite.mil,2001-11-17,2025-03-13,Private,5,Active
+167,SN-2025-167,Jason,Conway,jason.conway@elite.mil,2002-07-04,2024-11-15,Recruit,5,Active
+168,SN-2025-168,Jason,Olson,jason.olson@elite.mil,2005-05-24,2024-12-28,Corporal,4,Active
+169,SN-2025-169,Linda,Morgan,linda.morgan@elite.mil,2002-10-02,2024-09-21,Recruit,1,Active
+170,SN-2025-170,Miguel,Smith,miguel.smith@elite.mil,2001-01-23,2024-11-18,Private,5,Active
+171,SN-2025-171,Deborah,Roth,deborah.roth@elite.mil,2003-10-28,2024-03-25,Private,4,Active
+172,SN-2025-172,Robyn,Jacobs,robyn.jacobs@elite.mil,2003-08-21,2024-09-25,Private,3,Active
+173,SN-2025-173,Amy,Reilly,amy.reilly@elite.mil,2003-04-22,2024-09-30,Recruit,4,Active
+174,SN-2025-174,David,Wyatt,david.wyatt@elite.mil,2006-01-08,2025-10-09,Private,4,Active
+175,SN-2025-175,Raymond,Nelson,raymond.nelson@elite.mil,2002-11-08,2025-01-19,Corporal,4,Medical Leave
+176,SN-2025-176,Brian,Thompson,brian.thompson@elite.mil,2006-12-13,2024-11-25,Private,1,Active
+177,SN-2025-177,Richard,Vaughn,richard.vaughn@elite.mil,2003-11-11,2024-03-27,Corporal,3,Medical Leave
+178,SN-2025-178,Cassandra,Patterson,cassandra.patterson@elite.mil,2005-07-17,2025-07-08,Private,4,Active
+179,SN-2025-179,Maria,Smith,maria.smith@elite.mil,2005-03-04,2025-03-18,Corporal,5,Active
+180,SN-2025-180,Austin,Tran,austin.tran@elite.mil,2006-03-19,2024-02-03,Private,4,Medical Leave
+181,SN-2025-181,Drew,Evans,drew.evans@elite.mil,2003-07-05,2025-08-03,Private,2,Medical Leave
+182,SN-2025-182,Kayla,Joyce,kayla.joyce@elite.mil,2006-09-09,2025-11-07,Recruit,5,Medical Leave
+183,SN-2025-183,Jonathan,Edwards,jonathan.edwards@elite.mil,2001-07-27,2024-03-22,Recruit,2,Medical Leave
+184,SN-2025-184,Angela,Taylor,angela.taylor@elite.mil,2005-01-15,2024-02-17,Corporal,2,Medical Leave
+185,SN-2025-185,Deborah,Washington,deborah.washington@elite.mil,2004-08-28,2024-12-27,Recruit,4,Active
+186,SN-2025-186,Kathleen,Logan,kathleen.logan@elite.mil,2001-08-10,2023-12-17,Corporal,1,Active
+187,SN-2025-187,Jesus,Owens,jesus.owens@elite.mil,2006-10-26,2024-03-15,Private,1,Active
+188,SN-2025-188,Kathryn,Hall,kathryn.hall@elite.mil,2001-04-06,2024-09-24,Recruit,1,Active
+189,SN-2025-189,Sherry,Luna,sherry.luna@elite.mil,2003-06-29,2025-10-18,Recruit,5,Active
+190,SN-2025-190,Elizabeth,Lara,elizabeth.lara@elite.mil,2001-05-11,2024-12-24,Private,3,Active
+191,SN-2025-191,Amanda,Woods,amanda.woods@elite.mil,2001-04-17,2024-12-05,Private,5,Active
+192,SN-2025-192,Christopher,Guerrero,christopher.guerrero@elite.mil,2001-01-15,2024-05-17,Private,5,Medical Leave
+193,SN-2025-193,Mary,Singh,mary.singh@elite.mil,2005-02-04,2025-01-31,Private,5,Active
+194,SN-2025-194,Cassidy,Woods,cassidy.woods@elite.mil,2001-09-04,2024-06-24,Private,2,Active
+195,SN-2025-195,Karina,King,karina.king@elite.mil,2002-09-26,2024-11-16,Private,4,Active
+196,SN-2025-196,Gary,Butler,gary.butler@elite.mil,2006-05-21,2023-12-18,Private,4,Medical Leave
+197,SN-2025-197,Paul,Morales,paul.morales@elite.mil,2003-06-17,2025-04-09,Recruit,5,Active
+198,SN-2025-198,Anita,Harvey,anita.harvey@elite.mil,2002-06-16,2025-08-18,Private,1,Active
+199,SN-2025-199,Christopher,Lucero,christopher.lucero@elite.mil,2001-11-08,2024-06-29,Recruit,2,Active
+200,SN-2025-200,Mary,Oliver,mary.oliver@elite.mil,2001-11-16,2024-06-01,Recruit,5,Active
+201,SN-2025-201,Jeremy,Patterson,jeremy.patterson@elite.mil,2004-05-30,2025-03-28,Corporal,4,Active
+202,SN-2025-202,Nathan,Henson,nathan.henson@elite.mil,2005-09-12,2025-07-20,Recruit,5,Active
+203,SN-2025-203,Kelly,Buchanan,kelly.buchanan@elite.mil,2003-07-10,2023-12-24,Recruit,5,Active
+204,SN-2025-204,Jacqueline,Parsons,jacqueline.parsons@elite.mil,2003-02-02,2024-03-30,Corporal,1,Active
+205,SN-2025-205,Evan,Casey,evan.casey@elite.mil,2005-01-03,2024-12-08,Recruit,1,Active
+206,SN-2025-206,Scott,Thomas,scott.thomas@elite.mil,2002-06-15,2025-04-16,Recruit,5,Active
+207,SN-2025-207,Travis,Rios,travis.rios@elite.mil,2003-06-13,2024-12-07,Recruit,5,Medical Leave
+208,SN-2025-208,David,Carter,david.carter@elite.mil,2001-08-25,2024-07-21,Recruit,4,Medical Leave
+209,SN-2025-209,Dakota,Pierce,dakota.pierce@elite.mil,2002-11-14,2025-10-25,Recruit,2,Medical Leave
+210,SN-2025-210,Christopher,Walker,christopher.walker@elite.mil,2007-07-24,2025-02-22,Corporal,2,Medical Leave
+211,SN-2025-211,Jeanne,Rogers,jeanne.rogers@elite.mil,2006-03-20,2024-04-18,Private,3,Active
+212,SN-2025-212,Jennifer,Ferguson,jennifer.ferguson@elite.mil,2004-06-06,2024-10-18,Private,2,Active
+213,SN-2025-213,Drew,Ritter,drew.ritter@elite.mil,2002-03-23,2025-03-28,Recruit,1,Active
+214,SN-2025-214,Jessica,Harris,jessica.harris@elite.mil,2005-03-04,2025-06-26,Recruit,4,Active
+215,SN-2025-215,Justin,Jones,justin.jones@elite.mil,2002-05-03,2023-12-28,Corporal,2,Active
+216,SN-2025-216,Aaron,Le,aaron.le@elite.mil,2003-09-28,2025-10-21,Corporal,3,Medical Leave
+217,SN-2025-217,George,Harmon,george.harmon@elite.mil,2001-05-01,2023-12-23,Private,5,Active
+218,SN-2025-218,Courtney,Ball,courtney.ball@elite.mil,2007-03-11,2025-06-24,Private,1,Active
+219,SN-2025-219,Ashley,Williams,ashley.williams@elite.mil,2006-05-19,2024-07-04,Private,5,Active
+220,SN-2025-220,Zachary,Martinez,zachary.martinez@elite.mil,2000-12-28,2025-04-01,Recruit,4,Active
+221,SN-2025-221,Nicole,Jackson,nicole.jackson@elite.mil,2005-01-06,2024-03-23,Recruit,1,Medical Leave
+222,SN-2025-222,Wyatt,Moreno,wyatt.moreno@elite.mil,2004-07-27,2024-04-19,Private,4,Active
+223,SN-2025-223,Joel,Diaz,joel.diaz@elite.mil,2002-08-13,2025-08-02,Corporal,5,Medical Leave
+224,SN-2025-224,Darrell,Green,darrell.green@elite.mil,2007-12-04,2024-12-28,Corporal,2,Medical Leave
+225,SN-2025-225,Sheena,Lewis,sheena.lewis@elite.mil,2001-03-10,2024-08-10,Private,1,Active
+226,SN-2025-226,Joshua,Brown,joshua.brown@elite.mil,2005-08-28,2024-11-02,Corporal,4,Active
+227,SN-2025-227,Sharon,Dougherty,sharon.dougherty@elite.mil,2003-06-18,2025-07-20,Recruit,2,Active
+228,SN-2025-228,Robin,Lang,robin.lang@elite.mil,2006-09-29,2024-09-02,Private,2,Active
+229,SN-2025-229,Christopher,Wolf,christopher.wolf@elite.mil,2005-07-27,2025-02-23,Private,4,Active
+230,SN-2025-230,Luke,Kent,luke.kent@elite.mil,2004-09-27,2024-02-22,Corporal,2,Active
+231,SN-2025-231,Michael,Moore,michael.moore@elite.mil,2002-01-19,2024-08-27,Private,2,Medical Leave
+232,SN-2025-232,Martin,Rowe,martin.rowe@elite.mil,2003-01-24,2025-10-07,Private,1,Medical Leave
+233,SN-2025-233,Joshua,Lopez,joshua.lopez@elite.mil,2002-10-07,2024-10-14,Recruit,4,Active
+234,SN-2025-234,Ashley,Owen,ashley.owen@elite.mil,2004-01-23,2025-05-06,Recruit,2,Medical Leave
+235,SN-2025-235,Julie,Price,julie.price@elite.mil,2006-04-05,2025-09-08,Recruit,5,Active
+236,SN-2025-236,Jaclyn,Nolan,jaclyn.nolan@elite.mil,2005-02-26,2025-05-19,Private,1,Medical Leave
+237,SN-2025-237,Barbara,Anderson,barbara.anderson@elite.mil,2002-02-19,2023-12-26,Recruit,3,Active
+238,SN-2025-238,Mark,Sandoval,mark.sandoval@elite.mil,2007-06-29,2025-07-19,Corporal,4,Active
+239,SN-2025-239,Teresa,Goodman,teresa.goodman@elite.mil,2006-04-20,2025-05-30,Recruit,4,Medical Leave
+240,SN-2025-240,Alexis,Gonzalez,alexis.gonzalez@elite.mil,2003-04-30,2024-03-06,Corporal,1,Active
+241,SN-2025-241,Patrick,Leach,patrick.leach@elite.mil,2001-03-15,2024-12-31,Recruit,1,Medical Leave
+242,SN-2025-242,Anthony,Anderson,anthony.anderson@elite.mil,2003-09-17,2025-04-14,Private,4,Active
+243,SN-2025-243,Kathleen,Anthony,kathleen.anthony@elite.mil,2005-12-19,2025-09-02,Recruit,4,Active
+244,SN-2025-244,Kelly,Mccullough,kelly.mccullough@elite.mil,2007-10-16,2025-11-30,Recruit,2,Active
+245,SN-2025-245,Katrina,Baldwin,katrina.baldwin@elite.mil,2003-05-11,2025-01-08,Private,2,Active
+246,SN-2025-246,Maria,Bryant,maria.bryant@elite.mil,2003-10-16,2024-06-10,Recruit,4,Medical Leave
+247,SN-2025-247,Ashley,Berg,ashley.berg@elite.mil,2006-06-02,2024-07-16,Private,1,Active
+248,SN-2025-248,Susan,Barnes,susan.barnes@elite.mil,2006-11-10,2025-03-13,Corporal,3,Active
+249,SN-2025-249,Melanie,Harper,melanie.harper@elite.mil,2001-01-24,2024-01-22,Recruit,2,Medical Leave
+250,SN-2025-250,Jeanne,Clayton,jeanne.clayton@elite.mil,2004-02-04,2025-01-31,Private,1,Active
+251,SN-2025-251,Laura,Jackson,laura.jackson@elite.mil,2002-08-09,2023-12-20,Recruit,2,Medical Leave
+252,SN-2025-252,Tracy,Wright,tracy.wright@elite.mil,2005-02-20,2025-08-03,Private,2,Active
+253,SN-2025-253,Karen,Silva,karen.silva@elite.mil,2004-08-13,2024-08-24,Corporal,2,Active
+254,SN-2025-254,Sarah,Berry,sarah.berry@elite.mil,2006-01-07,2024-12-06,Corporal,5,Active
+255,SN-2025-255,Anna,Wilson,anna.wilson@elite.mil,2007-11-18,2024-05-17,Recruit,1,Active
+256,SN-2025-256,Erik,Ramirez,erik.ramirez@elite.mil,2005-05-13,2025-08-04,Recruit,3,Active
+257,SN-2025-257,Gary,Mills,gary.mills@elite.mil,2006-05-16,2024-09-18,Private,4,Medical Leave
+258,SN-2025-258,Patricia,Miller,patricia.miller@elite.mil,2007-07-24,2024-01-28,Recruit,3,Active
+259,SN-2025-259,Carrie,Miller,carrie.miller@elite.mil,2007-02-21,2023-12-30,Private,2,Active
+260,SN-2025-260,Kimberly,Higgins,kimberly.higgins@elite.mil,2003-03-17,2025-03-21,Recruit,4,Active
+261,SN-2025-261,Kristin,Lee,kristin.lee@elite.mil,2007-05-14,2024-07-02,Private,1,Active
+262,SN-2025-262,Heather,Braun,heather.braun@elite.mil,2007-05-08,2025-05-26,Corporal,2,Active
+263,SN-2025-263,Joshua,Brown,joshua.brown@elite.mil,2004-09-30,2025-09-19,Recruit,1,Active
+264,SN-2025-264,Jacob,Russell,jacob.russell@elite.mil,2003-11-16,2025-02-12,Corporal,1,Active
+265,SN-2025-265,James,Crosby,james.crosby@elite.mil,2007-02-27,2024-11-18,Private,5,Medical Leave
+266,SN-2025-266,Brittany,Weaver,brittany.weaver@elite.mil,2006-09-08,2025-07-10,Private,2,Active
+267,SN-2025-267,Kelly,Miller,kelly.miller@elite.mil,2007-04-20,2024-09-16,Corporal,2,Active
+268,SN-2025-268,Jeremy,Benitez,jeremy.benitez@elite.mil,2005-03-21,2024-09-15,Private,4,Active
+269,SN-2025-269,Larry,Munoz,larry.munoz@elite.mil,2007-06-14,2025-04-20,Recruit,1,Active
+270,SN-2025-270,Brian,Gonzales,brian.gonzales@elite.mil,2005-12-03,2025-11-02,Recruit,1,Active
+271,SN-2025-271,Cody,Harris,cody.harris@elite.mil,2005-12-19,2024-09-04,Private,2,Active
+272,SN-2025-272,Richard,Hernandez,richard.hernandez@elite.mil,2004-10-09,2024-08-05,Recruit,1,Active
+273,SN-2025-273,Susan,Smith,susan.smith@elite.mil,2005-02-21,2025-05-30,Private,5,Active
+274,SN-2025-274,Zoe,Roberts,zoe.roberts@elite.mil,2007-04-01,2025-05-14,Private,2,Active
+275,SN-2025-275,Elizabeth,Ramirez,elizabeth.ramirez@elite.mil,2003-06-27,2025-04-04,Recruit,2,Active
+276,SN-2025-276,Marie,Ferguson,marie.ferguson@elite.mil,2005-11-30,2024-12-14,Private,2,Medical Leave
+277,SN-2025-277,Kim,Nichols,kim.nichols@elite.mil,2003-07-27,2024-06-18,Corporal,2,Active
+278,SN-2025-278,Jeffrey,Martin,jeffrey.martin@elite.mil,2001-03-01,2025-04-11,Recruit,5,Medical Leave
+279,SN-2025-279,Shannon,Harris,shannon.harris@elite.mil,2004-02-07,2025-05-24,Recruit,2,Medical Leave
+280,SN-2025-280,Kimberly,Bennett,kimberly.bennett@elite.mil,2005-07-02,2025-02-15,Recruit,3,Active
+281,SN-2025-281,Todd,Pratt,todd.pratt@elite.mil,2001-01-05,2024-03-12,Private,1,Medical Leave
+282,SN-2025-282,Joshua,Sullivan,joshua.sullivan@elite.mil,2003-02-04,2025-08-13,Recruit,2,Active
+283,SN-2025-283,Daniel,Walker,daniel.walker@elite.mil,2003-09-28,2023-12-30,Recruit,3,Active
+284,SN-2025-284,Randall,Combs,randall.combs@elite.mil,2003-09-04,2024-08-21,Private,5,Active
+285,SN-2025-285,Melissa,Frazier,melissa.frazier@elite.mil,2003-09-23,2025-02-08,Corporal,3,Active
+286,SN-2025-286,Joseph,Ramos,joseph.ramos@elite.mil,2007-01-19,2025-02-20,Recruit,1,Medical Leave
+287,SN-2025-287,Joseph,Weeks,joseph.weeks@elite.mil,2006-02-09,2025-06-24,Corporal,5,Active
+288,SN-2025-288,Brian,Moore,brian.moore@elite.mil,2006-02-15,2024-01-10,Recruit,2,Medical Leave
+289,SN-2025-289,Lisa,Jones,lisa.jones@elite.mil,2006-06-02,2025-10-16,Private,1,Active
+290,SN-2025-290,Deborah,James,deborah.james@elite.mil,2006-12-27,2025-07-06,Recruit,4,Active
+291,SN-2025-291,Scott,Johnson,scott.johnson@elite.mil,2003-07-12,2025-03-18,Private,3,Active
+292,SN-2025-292,Charles,Stuart,charles.stuart@elite.mil,2005-06-13,2025-09-07,Private,2,Active
+293,SN-2025-293,Karen,Woods,karen.woods@elite.mil,2003-10-03,2025-04-07,Recruit,2,Active
+294,SN-2025-294,Anthony,Garcia,anthony.garcia@elite.mil,2005-05-18,2024-09-30,Corporal,4,Active
+295,SN-2025-295,Travis,Harper,travis.harper@elite.mil,2005-05-15,2025-04-16,Private,1,Active
+296,SN-2025-296,Jesse,Delgado,jesse.delgado@elite.mil,2005-12-25,2024-01-05,Recruit,4,Active
+297,SN-2025-297,Andrew,Cunningham,andrew.cunningham@elite.mil,2003-05-07,2024-02-19,Corporal,4,Active
+298,SN-2025-298,Ricky,Lawson,ricky.lawson@elite.mil,2004-11-11,2025-06-21,Private,2,Active
+299,SN-2025-299,Patrick,Fuller,patrick.fuller@elite.mil,2001-03-23,2024-02-21,Private,1,Active
+300,SN-2025-300,Holly,Johnson,holly.johnson@elite.mil,2001-09-08,2024-03-19,Recruit,1,Active
