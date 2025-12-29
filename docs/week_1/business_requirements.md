@@ -11,7 +11,7 @@ The system handles five core entities to manage the cadet lifecycle:
 
 ### 1.1 Students (Cadets)
 - **Purpose**: Maintain official personnel records for all trainees.
-- **Attributes**: Service Number (Unique), First Name, Last Name, Email, Rank, Status (Active, Graduated, etc.).
+- **Attributes**: Service Number (Unique), First Name, Last Name, Date of Birth, Gender, Contact Number, Email, Address, Company ID, Rank, Status (Active, Graduated, etc.).
 
 ### 1.2 Courses (Modules)
 - **Purpose**: Define the training curriculum catalog.
@@ -29,24 +29,51 @@ The system handles five core entities to manage the cadet lifecycle:
 - **Purpose**: Track daily presence for accountability and discipline.
 - **Attributes**: Student ID, Course ID, Date, Status (Present, Absent, Late, AWOL).
 
+### 1.6 Companies (Organizational Units)
+- **Purpose**: Group students into operational units (e.g., Platoons, Companies).
+- **Attributes**: Company ID, Company Name, Location/Barracks, Commanding Officer.
+
+### 1.7 Performance Summary (Analytics)
+- **Purpose**: Store pre-calculated metrics for quick access to cadet standing.
+- **Attributes**: Student ID, GPA, Attendance Rate, Total Credits, Current Standing.
+
+### 1.8 Attrition Risk (Predictions)
+- **Purpose**: Track ML-driven risk assessments for student dropout.
+- **Attributes**: Student ID, Assessment Date, Risk Score (0-100), Risk Level (Low, Medium, High), Contributing Factors.
+
 ---
 
 ## 2. Entity-Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
+    COMPANY ||--o{ STUDENT : "assigned_to"
     STUDENT ||--o{ ENROLLMENT : "has"
     STUDENT ||--o{ ATTENDANCE : "recorded_as"
+    STUDENT ||--|| PERFORMANCE_SUMMARY : "has_metrics"
+    STUDENT ||--o{ ATTRITION_RISK : "evaluated_for"
     COURSE ||--o{ ENROLLMENT : "includes"
     COURSE ||--o{ ATTENDANCE : "held_for"
     ENROLLMENT ||--o{ GRADE : "contains"
 
+    COMPANY {
+        int company_id PK
+        string company_name UK
+        string location
+        string commanding_officer
+    }
+
     STUDENT {
         int student_id PK
+        int company_id FK
         string service_number UK
         string first_name
         string last_name
+        date date_of_birth
+        string gender
+        string contact_number
         string email
+        string address
         string rank
         string status
     }
@@ -83,10 +110,26 @@ erDiagram
         date muster_date
         string status
     }
+
+    PERFORMANCE_SUMMARY {
+        int summary_id PK
+        int student_id FK
+        float gpa
+        float attendance_rate
+        int total_credits
+        string current_standing
+    }
+
+    ATTRITION_RISK {
+        int risk_id PK
+        int student_id FK
+        date assessment_date
+        float risk_score
+        string risk_level
+        string contributing_factors
+    }
 ```
 
-<!-- [ERD_SVG_PLACEHOLDER] -->
-<!-- Please add your exported SVG file here for a high-quality visual representation. -->
 ![Elite Defense Academy ERD](./ERD.svg)
 
 ---
@@ -104,11 +147,14 @@ The database schema is designed to adhere to **3rd Normal Form (3NF)** to ensure
 
 | Table | Primary Key (PK) | Foreign Key (FK) | Reference / Parent Table |
 | :--- | :--- | :--- | :--- |
-| **STUDENTS** | `student_id` | - | - |
+| **COMPANIES** | `company_id` | - | - |
+| **STUDENTS** | `student_id` | `company_id` | **COMPANIES** (`company_id`) |
 | **COURSES** | `course_id` | - | - |
 | **ENROLLMENTS** | `enrollment_id` | `student_id`<br>`course_id` | **STUDENTS** (`student_id`) <br> **COURSES** (`course_id`) |
 | **GRADES** | `grade_id` | `enrollment_id` | **ENROLLMENTS** (`enrollment_id`) |
 | **ATTENDANCE** | `attendance_id` | `student_id`<br>`course_id` | **STUDENTS** (`student_id`) <br> **COURSES** (`course_id`) |
+| **PERFORMANCE_SUMMARY** | `summary_id` | `student_id` | **STUDENTS** (`student_id`) |
+| **ATTRITION_RISK** | `risk_id` | `student_id` | **STUDENTS** (`student_id`) |
 
 #### Key Logic & Rationale
 - **Primary Keys**: Every table uses a surrogate integer `PK` (e.g., `student_id`) for internal indexing and performance. Business identifiers like `service_number` or `course_code` are maintained as **Unique Keys (UK)**.
