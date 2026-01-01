@@ -64,19 +64,19 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO srms_readonly;
 -- =====================================================
 
 -- Admin user (for system administration)
-CREATE USER srms_admin_user WITH PASSWORD 'CHANGE_THIS_PASSWORD_ADMIN';
+CREATE USER srms_admin_user WITH PASSWORD '1102';
 GRANT srms_admin TO srms_admin_user;
 
 -- Instructor user (for instructors/trainers)
-CREATE USER srms_instructor_user WITH PASSWORD 'CHANGE_THIS_PASSWORD_INSTRUCTOR';
+CREATE USER srms_instructor_user WITH PASSWORD '1102';
 GRANT srms_instructor TO srms_instructor_user;
 
 -- Read-only user (for analytics/reporting)
-CREATE USER srms_report_user WITH PASSWORD 'CHANGE_THIS_PASSWORD_REPORT';
+CREATE USER srms_report_user WITH PASSWORD '1102';
 GRANT srms_readonly TO srms_report_user;
 
 -- Application service user (for backend API)
-CREATE USER srms_app_user WITH PASSWORD 'CHANGE_THIS_PASSWORD_APP';
+CREATE USER srms_app_user WITH PASSWORD '1102';
 GRANT srms_instructor TO srms_app_user;
 
 -- =====================================================

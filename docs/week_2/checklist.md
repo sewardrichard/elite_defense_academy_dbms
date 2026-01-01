@@ -1,7 +1,7 @@
 # Week 2 — Phase 2: Database Setup & Table Creation
 
-- [ ] **Install and configure PostgreSQL or MySQL**
-- [ ] **Create database**: `student_records_db`
+- [x] **Install and configure PostgreSQL or MySQL**
+- [x] **Create database**: `student_records_db`
 - [x] **Write SQL scripts to create all tables**:
     - [x] Students
     - [x] Companies
