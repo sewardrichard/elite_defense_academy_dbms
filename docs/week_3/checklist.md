@@ -7,19 +7,19 @@
     - [x] Enrollment records
     - [x] Grade records
     - [x] Attendance logs
-- [ ] **Data Quality**
-    - [ ] Use `Faker` to generate realistic names & data
-    - [ ] Validate data before loading
-- [ ] **Database Loading**
-    - [ ] Insert sample data into the database
+- [x] **Data Quality**
+    - [x] Use `Faker` to generate realistic names & data
+    - [x] Validate data before loading
+- [x] **Database Loading**
+    - [x] Insert sample data into the database
 
 ## Phase 4: ETL Pipeline (Python)
-- [ ] **Extraction**
-    - [ ] Extract data from CSV, Excel, and JSON sources
-- [ ] **Transformation**
-    - [ ] Clean missing values
-    - [ ] Standardize date formats
-    - [ ] Validate email formats
+- [x] **Extraction**
+    - [x] Extract data from CSV, Excel, and JSON sources
+- [x] **Transformation**
+    - [x] Clean missing values
+    - [x] Standardize date formats
+    - [x] Validate email formats
     - [ ] Calculate GPA
     - [ ] Categorize attendance rates
 - [ ] **Loading**
