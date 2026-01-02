@@ -1,0 +1,82 @@
+[
+    {
+        "course_code": "MED-918",
+        "course_title": "Medical Aut Fundamentals",
+        "department": "Medical",
+        "credits": 3,
+        "difficulty": "Basic",
+        "description": "Officia minima maxime minima fugiat magni."
+    },
+    {
+        "course_code": "MED-831",
+        "course_title": "Medical Delectus Fundamentals",
+        "department": "Medical",
+        "credits": 4,
+        "difficulty": "Intermediate",
+        "description": "Velit optio dolorem vel itaque dolorum necessitatibus illo reprehenderit praesentium expedita."
+    },
+    {
+        "course_code": "CYB-823",
+        "course_title": "Cybersecurity Officiis Fundamentals",
+        "department": "Cybersecurity",
+        "credits": 4,
+        "difficulty": "Basic",
+        "description": "Ipsum esse fuga deleniti quae magni corrupti facere quod ratione repellat debitis."
+    },
+    {
+        "course_code": "CYB-940",
+        "course_title": "Cybersecurity Numquam Fundamentals",
+        "department": "Cybersecurity",
+        "credits": 3,
+        "difficulty": "Basic",
+        "description": "Tempore non exercitationem perspiciatis quos nobis nulla."
+    },
+    {
+        "course_code": "MED-932",
+        "course_title": "Medical Quod Fundamentals",
+        "department": "Medical",
+        "credits": 2,
+        "difficulty": "Intermediate",
+        "description": "Inventore odio excepturi necessitatibus cumque cumque temporibus unde ea eos nulla veritatis."
+    },
+    {
+        "course_code": "LOG-806",
+        "course_title": "Logistics Nostrum Fundamentals",
+        "department": "Logistics",
+        "credits": 3,
+        "difficulty": "Basic",
+        "description": "Placeat iste laborum minima fuga maiores voluptates saepe unde blanditiis quam animi sequi."
+    },
+    {
+        "course_code": "AVI-949",
+        "course_title": "Aviation Incidunt Fundamentals",
+        "department": "Aviation",
+        "credits": 4,
+        "difficulty": "Basic",
+        "description": "Reiciendis et nam quae impedit reprehenderit eveniet aperiam."
+    },
+    {
+        "course_code": "MED-834",
+        "course_title": "Medical Rem Fundamentals",
+        "department": "Medical",
+        "credits": 3,
+        "difficulty": "Basic",
+        "description": "Nulla eos voluptate exercitationem sit minus ratione ullam aliquid numquam."
+    },
+    {
+        "course_code": "LOG-914",
+        "course_title": "Logistics Praesentium Fundamentals",
+        "department": "Logistics",
+        "credits": 3,
+        "difficulty": "Basic",
+        "description": "Vitae blanditiis eaque esse possimus minima amet aspernatur veniam tenetur animi quasi eos excepturi."
+    },
+    {
+        "course_code": "MED-853",
+        "course_title": "Medical Nisi Fundamentals",
+        "department": "Medical",
+        "credits": 4,
+        "difficulty": "Basic",
+        "description": "Blanditiis sint suscipit ullam optio consequatur nobis voluptate."
+    }
+]
