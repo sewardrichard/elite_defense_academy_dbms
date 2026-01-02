@@ -69,7 +69,7 @@ def generate_messy_student_csv(filename='students_raw.csv', n=50):
 
     print(f"Created {filename} with ~{n} rows.")
 
-def generate_course_json(filename='courses_catalog.json', n=10):
+def generate_courses_json(filename='courses_catalog.json', n=10):
     """
     Generate a JSON file representing an external course catalog.
     """
@@ -82,7 +82,7 @@ def generate_course_json(filename='courses_catalog.json', n=10):
     for _ in range(n):
         dept = random.choice(departments)
         course = {
-            "course_code": f"{dept[:3].upper()}-{fake.random_int(800, 999)}", # New range to distinguish from DB data
+            "course_code": f"{dept[:3].upper()}-{fake.random_int(800, 999)}", # New range
             "course_title": f"{dept} {fake.word().capitalize()} Fundamentals",
             "department": dept,
             "credits": random.randint(2, 4),
@@ -96,6 +96,46 @@ def generate_course_json(filename='courses_catalog.json', n=10):
         
     print(f"Created {filename} with {n} courses.")
 
+def generate_messy_grades_csv(filename='grades_raw.csv', n=100):
+    """Generate raw assessment data with missing values and bad formats."""
+    filepath = os.path.join(RAW_DATA_DIR, filename)
+    headers = ['Student_Email', 'Course_Code', 'Assessment', 'Raw_Score', 'Weight', 'Date']
+    
+    with open(filepath, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        for _ in range(n):
+            score = random.uniform(30, 100) if random.random() > 0.1 else "" # Missing values
+            date = fake.date_this_year().strftime("%d/%m/%Y") if random.random() > 0.2 else fake.date_this_year().isoformat()
+            writer.writerow([
+                fake.email(), 
+                f"TAC-{random.randint(100, 110)}", 
+                random.choice(['Quiz', 'Exam', 'Final']), 
+                score, 
+                0.2, 
+                date
+            ])
+    print(f"Created {filename}")
+
+def generate_messy_attendance_csv(filename='attendance_raw.csv', n=100):
+    """Generate raw attendance logs."""
+    filepath = os.path.join(RAW_DATA_DIR, filename)
+    headers = ['Email', 'Course', 'MusterDate', 'Status']
+    
+    with open(filepath, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        for _ in range(n):
+            writer.writerow([
+                fake.email(),
+                f"TAC-{random.randint(100, 110)}",
+                fake.date_this_month().isoformat(),
+                random.choice(['Present', 'Absent', 'Late', 'Excused', 'UNK'])
+            ])
+    print(f"Created {filename}")
+
 if __name__ == "__main__":
     generate_messy_student_csv()
-    generate_course_json()
+    generate_courses_json()
+    generate_messy_grades_csv()
+    generate_messy_attendance_csv()
