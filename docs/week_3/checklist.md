@@ -20,9 +20,9 @@
     - [x] Clean missing values
     - [x] Standardize date formats
     - [x] Validate email formats
-    - [ ] Calculate GPA
-    - [ ] Categorize attendance rates
-- [ ] **Loading**
-    - [ ] Load data into the database using efficient batch inserts
-- [ ] **Robustness**
-    - [ ] Add error handling, logging, and rollback logic
+    - [x] Calculate GPA
+    - [x] Categorize attendance rates
+- [x] **Loading**
+    - [x] Load data into the database using efficient batch inserts
+- [x] **Robustness**
+    - [x] Add error handling, logging, and rollback logic
