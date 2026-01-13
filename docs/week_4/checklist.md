@@ -1,15 +1,15 @@
 # Week 4 Checklist: Phase 5, 6 & 7
 
 ## Phase 5: SQL Query Development
-- [ ] **Advanced SQL Scripts**
-    - [ ] View all students in a specific course
-    - [ ] Calculate course-level average grades
-    - [ ] Identify students with <75% attendance
-    - [ ] Rank top 10 students by GPA
-    - [ ] Generate course enrollment stats
-- [ ] **Database Objects**
-    - [ ] Build stored procedures for enrollment, grade entry, and attendance updates
-    - [ ] Create views for transcripts, rosters, and attendance reports
+- [x] **Advanced SQL Scripts**
+    - [x] View all students in a specific course
+    - [x] Calculate course-level average grades
+    - [x] Identify students with <75% attendance
+    - [x] Rank top 10 students by GPA
+    - [x] Generate course enrollment stats
+- [x] **Database Objects**
+    - [x] Build stored procedures for enrollment, grade entry, and attendance updates
+    - [x] Create views for transcripts, rosters, and attendance reports
 
 ## Phase 6: Python Application Interface
 - [ ] **CLI Development**

@@ -35,12 +35,35 @@ def generate_sa_phone():
     prefix = random.choice(['60', '61', '62', '63', '71', '72', '73', '74', '76', '78', '79', '81', '82', '83', '84'])
     return f"+27 {prefix} {fake.random_number(digits=3, fix_len=True)} {fake.random_number(digits=4, fix_len=True)}"
 
-# Database Configuration
-DB_NAME = os.getenv("DB_NAME", "student_records_db")
-DB_USER = os.getenv("DB_USER", "srms_admin_user")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "1102")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
+def load_env_from_file():
+    """Load key=value pairs from project root .env if present (non-fatal if missing)."""
+    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..", ".env"))
+    if not os.path.isfile(env_path):
+        return
+    with open(env_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            if k and v and k not in os.environ:
+                os.environ[k] = v
+
+
+def require_env(key: str, default: str = None):
+    val = os.getenv(key, default)
+    if val is None:
+        raise ValueError(f"Missing required environment variable: {key}. Set it in .env")
+    return val
+
+
+# Database Configuration (pulled from .env or process env)
+load_env_from_file()
+DB_NAME = require_env("DB_NAME", "student_records_db")
+DB_USER = require_env("DB_USER")
+DB_PASSWORD = require_env("DB_PASSWORD")
+DB_HOST = require_env("DB_HOST", "localhost")
+DB_PORT = require_env("DB_PORT", "5432")
 
 def create_connection():
     try:
