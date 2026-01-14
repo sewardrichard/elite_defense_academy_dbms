@@ -8,7 +8,7 @@ from faker import Faker
 fake = Faker(['zu_ZA', 'en_GB'])
 
 # Directory setup
-RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '../../data/raw')
+RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '../docs/data/raw')
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
 def generate_messy_student_csv(filename='students_raw.csv', n=50):
