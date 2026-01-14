@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def load_env_from_file():
     """Load key=value pairs from project root .env if present (non-fatal if missing)."""
-    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..", ".env"))
+    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
     if not os.path.isfile(env_path):
         return
     with open(env_path, "r", encoding="utf-8") as f:
@@ -47,7 +47,7 @@ DB_PORT = require_env("DB_PORT", "5432")
 
 # Directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-RAW_DATA_DIR = os.path.join(BASE_DIR, '../../data/raw')
+RAW_DATA_DIR = os.path.join(BASE_DIR, '../docs/data/raw')
 
 def create_connection():
     """Establish database connection."""

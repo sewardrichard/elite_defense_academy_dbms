@@ -7,3 +7,13 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Generated Reports
+reports/
+student_roster.csv
+attendance_report.pdf
+attendance_report.csv

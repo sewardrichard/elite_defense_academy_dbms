@@ -77,11 +77,8 @@ def export_to_pdf(query, title, filename):
 def generate_roster_report(format='csv'):
     """Generate Student Roster Report (Course Roster)."""
     query = "SELECT * FROM vw_course_roster"
-    # Fallback if view doesn't exist, though it should per docs. 
-    # Just in case, let's assume it exists or use a raw query if it fails? 
-    # The user instructions imply views exist.
     
-    filename = f"student_roster.{format}"
+    filename = os.path.join("reports", f"student_roster.{format}")
     if format == 'csv':
         export_to_csv(query, filename)
     elif format == 'pdf':
@@ -90,7 +87,7 @@ def generate_roster_report(format='csv'):
 def generate_attendance_report(format='csv'):
     """Generate Attendance Report."""
     query = "SELECT * FROM vw_attendance_report LIMIT 100" # Limit for PDF safety
-    filename = f"attendance_report.{format}"
+    filename = os.path.join("reports", f"attendance_report.{format}")
     if format == 'csv':
         export_to_csv(query, filename)
     elif format == 'pdf':
