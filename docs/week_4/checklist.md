@@ -12,26 +12,26 @@
     - [x] Create views for transcripts, rosters, and attendance reports
 
 ## Phase 6: Python Application Interface
-- [ ] **CLI Development**
-    - [ ] Implement Add Student functionality
-    - [ ] Implement Course Enrollment functionality
-    - [ ] Implement Record Grades functionality
-    - [ ] Implement Mark Attendance functionality
-- [ ] **Reporting**
-    - [ ] Generate reports (CSV)
-    - [ ] Generate reports (PDF using ReportLab)
-- [ ] **CRUD Operations**
-    - [ ] Perform full CRUD operations with robust input validation
+- [x] **CLI Development**
+    - [x] Implement Add Student functionality
+    - [x] Implement Course Enrollment functionality
+    - [x] Implement Record Grades functionality
+    - [x] Implement Mark Attendance functionality
+- [x] **Reporting**
+    - [x] Generate reports (CSV)
+    - [x] Generate reports (PDF using ReportLab)
+- [x] **CRUD Operations**
+    - [x] Perform full CRUD operations with robust input validation
 
 ## Phase 7: Data Quality & Testing
-- [ ] **Validation**
-    - [ ] Validate grade ranges, date formats, and duplicate IDs
-- [ ] **Test Cases**
-    - [ ] Create tests for Inserts
-    - [ ] Create tests for ETL pipeline
-    - [ ] Create tests for SQL query accuracy
-- [ ] **Documentation**
-    - [ ] Document all testing results
+- [x] **Validation**
+    - [x] Validate grade ranges, date formats, and duplicate IDs
+- [x] **Test Cases**
+    - [x] Create tests for Inserts
+    - [x] Create tests for ETL pipeline
+    - [x] Create tests for SQL query accuracy
+- [x] **Documentation**
+    - [x] Document all testing results
 
 ## Deployment (End of Week 4)
 - [ ] **Cloud Database**

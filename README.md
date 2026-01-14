@@ -43,8 +43,8 @@ elite_defense_academy_dbms/
 | **Phase 3** | Database Schema (Week 2 SQL) | ✅ Complete |
 | **Phase 4** | ETL & Sample Data (Week 3 scripts) | ✅ Complete |
 | **Phase 5** | Advanced SQL Views & Procs (Week 4) | ✅ Complete |
-| **Phase 6** | Application Interface (CLI) | ⏳ In progress |
-| **Phase 7** | Deployment & Documentation | ⏳ Pending |
+| **Phase 6** | Application Interface (CLI) | ✅ Complete |
+| **Phase 7** | Data Quality & Testing | ⏳ In progress |
 
 ---
 
