@@ -86,33 +86,27 @@ python scripts/etl_pipeline.py
 ### 4. Application Usage (CLI)
 The application is accessed via the command line interface from the project root.
 
-**Run the CLI help:**
+### 4. Application Usage (CLI)
+The application is accessed via the command line interface from the project root. It now features an interactive menu system.
+
+**Run the CLI:**
 ```bash
-python main.py --help
+python main.py
 ```
 
-**Common Commands:**
+**Interactive Menu:**
+You will be presented with the following options:
 
-*   **Add a Student**:
-    ```bash
-    python main.py add-student --first "John" --last "Doe" --email "john.doe@example.com" --dob "2000-01-01" --gender "Male"
-    ```
+1.  **Add Student**: Follow prompts to enter student details.
+2.  **Enroll Student**: Register a student for a course.
+3.  **Record Grade**: Enter assessment scores.
+4.  **Mark Attendance**: Log daily attendance.
+5.  **Generate Reports**: Create PDF or CSV reports.
+0.  **Exit**: Quit the application.
 
-*   **Enroll**:
-    ```bash
-    python main.py enroll --email "john.doe@example.com" --course "TAC-101" --date "2023-01-15"
-    ```
-
-*   **Mark Attendance**:
-    ```bash
-    python main.py attendance --email "john.doe@example.com" --course "TAC-101" --status "Present"
-    ```
-
-*   **Generate Report**:
-    ```bash
-    # Generates specific report in the /reports folder
-    python main.py report --type roster --format pdf
-    ```
+**Navigation:**
+- Enter the number corresponding to your choice.
+- Type `q`, `back`, or `quit` at any prompt to cancel the operation and return to the main menu.
 
 ### 5. Running Tests
 Run the unit and integration tests to verify system stability:

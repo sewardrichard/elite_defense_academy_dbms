@@ -45,3 +45,29 @@ def validate_score(score):
         return 0 <= s <= 100
     except ValueError:
         return False
+
+def get_user_input(prompt, validator=None, required=True):
+    """
+    Get input from user with validation and exit option.
+    Returns None if user types 'q' or 'back'.
+    """
+    while True:
+        value = input(f"{prompt} (or 'q' to cancel): ").strip()
+        
+        if value.lower() in ['q', 'back', 'quit']:
+            return None
+            
+        if not value and required:
+            print("Error: This field is required.")
+            continue
+            
+        if not value and not required:
+            return ""
+
+        if validator:
+            if validator(value):
+                return value
+            else:
+                print("Error: Invalid format. Please try again.")
+        else:
+            return value
