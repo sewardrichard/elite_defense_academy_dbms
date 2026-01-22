@@ -351,9 +351,10 @@ def menu_stored_procedures():
         params = None
         
         if choice == '1':
-            course_code = get_user_input("Enter Course Code (e.g. TAC-101)")
-            if course_code is None: continue
-            
+            course_code = select_course_for_proc()
+            if course_code is None:
+                continue
+
             raw_sql = get_sql_content("05_view_course_students.sql")
             if raw_sql:
                 # Replace hardcoded value in file with parameter placeholder
@@ -398,6 +399,96 @@ def select_from_list(options, prompt_text):
                 return options[auth_idx]
             else:
                 console.print("Invalid number.", style="red")
+        except ValueError:
+            console.print("Invalid input.", style="red")
+
+
+def select_course_for_proc():
+    """Paginated course selector for stored-proc flows. Returns course_code or None."""
+    offset = 0
+    limit = 10
+
+    # total count
+    res_count = execute_query("SELECT COUNT(*) as cnt FROM courses", fetch=True)
+    total_items = res_count[0]['cnt'] if res_count else 0
+    total_pages = math.ceil(total_items / limit) if total_items else 1
+
+    while True:
+        current_page = (offset // limit) + 1
+        query = f"SELECT course_id, course_code, name, credits FROM courses ORDER BY course_id LIMIT {limit} OFFSET {offset}"
+        courses = execute_query(query, fetch=True)
+
+        console.print(Panel(f"Select Course (Page {current_page} of {max(1, total_pages)})", style="cyan"))
+        if courses:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Credits", style="yellow")
+            for i, c in enumerate(courses, 1):
+                tbl.add_row(str(i), c.get('course_code', ''), c.get('name', ''), str(c.get('credits', '')))
+            console.print(tbl)
+        else:
+            if offset == 0:
+                console.print("No courses found.")
+            else:
+                console.print("No more courses.")
+
+        console.print("Options:", style="bold")
+        console.print(" - Enter Number to select")
+        console.print(" - [s] Search", style="red", markup=False)
+        if current_page < total_pages:
+            console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip()
+        if choice.lower() == 'q':
+            return None
+
+        if choice.lower() == 's':
+            term = get_user_input("Search term (course code or name)")
+            if term is None:
+                continue
+            search_sql = "SELECT course_id, course_code, name, credits FROM courses WHERE course_code ILIKE %s OR name ILIKE %s ORDER BY course_id LIMIT 10"
+            results = execute_query(search_sql, (f"%{term}%", f"%{term}%"), fetch=True)
+            if not results:
+                console.print("No matches found.", style="red")
+                continue
+
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Credits", style="yellow")
+            for i, c in enumerate(results, 1):
+                tbl.add_row(str(i), c.get('course_code', ''), c.get('name', ''), str(c.get('credits', '')))
+            console.print(tbl)
+
+            sel = get_user_input(f"Select (1-{len(results)})", required=False)
+            if sel is None or sel == '':
+                continue
+            try:
+                idx = int(sel) - 1
+                if 0 <= idx < len(results):
+                    return results[idx].get('course_code')
+            except ValueError:
+                console.print("Invalid selection.", style="red")
+            continue
+
+        if choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(courses):
+                return courses[idx].get('course_code')
+            else:
+                console.print("Invalid selection.", style="red")
         except ValueError:
             console.print("Invalid input.", style="red")
 
