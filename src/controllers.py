@@ -11,10 +11,34 @@ def get_course_id_by_code(code):
     res = execute_query("SELECT course_id FROM courses WHERE course_code = %s", (code,), fetch=True)
     return res[0]['course_id'] if res else None
 
+def get_all_courses():
+    """Retrieve all available courses."""
+    return execute_query("SELECT course_id, course_code, name, description FROM courses ORDER BY course_id", fetch=True)
+
 def get_default_company_id():
     """Get the first company ID found in DB."""
     res = execute_query("SELECT company_id FROM companies LIMIT 1", fetch=True)
     return res[0]['company_id'] if res else None
+
+def get_student_details(student_id):
+    """Get full student details by ID."""
+    query = "SELECT * FROM students WHERE student_id = %s"
+    res = execute_query(query, (student_id,), fetch=True)
+    return res[0] if res else None
+
+def get_students_in_course(course_code):
+    """Get all students enrolled in a course."""
+    cid = get_course_id_by_code(course_code)
+    if not cid: return None
+    
+    query = """
+        SELECT s.student_id, s.first_name, s.last_name, s.email, e.enrollment_id 
+        FROM enrollments e
+        JOIN students s ON e.student_id = s.student_id
+        WHERE e.course_id = %s
+        ORDER BY s.last_name, s.first_name
+    """
+    return execute_query(query, (cid,), fetch=True)
 
 def get_enrollment_id(student_email, course_code):
     """Resolve enrollment ID from student email and course code."""
@@ -287,4 +311,84 @@ def delete_attendance(attendance_id):
         return True
     except Exception as e:
         print(f"Error deleting attendance: {e}")
+        return False
+
+def add_course(course_code, name, credits, department, difficulty='Basic', description=None):
+    """Add a new course."""
+    query = """
+        INSERT INTO courses (course_code, name, credits, department, difficulty_level, description)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING course_id
+    """
+    try:
+        res = execute_query(query, (course_code, name, credits, department, difficulty, description), fetch=True, commit=True)
+        if res:
+            print(f"Course added: {course_code} - {name}")
+            return True
+    except Exception as e:
+        print(f"Error adding course: {e}")
+        return False
+
+def update_course(course_id, name=None, credits=None, department=None, difficulty=None, description=None):
+    """Update course details."""
+    updates = []
+    params = []
+    
+    if name:
+        updates.append("name = %s")
+        params.append(name)
+    if credits is not None:
+        updates.append("credits = %s")
+        params.append(credits)
+    if department:
+        updates.append("department = %s")
+        params.append(department)
+    if difficulty:
+        updates.append("difficulty_level = %s")
+        params.append(difficulty)
+    if description is not None:
+        updates.append("description = %s")
+        params.append(description)
+        
+    if not updates:
+        print("No changes provided.")
+        return False
+        
+    updates.append("updated_at = CURRENT_TIMESTAMP")
+    query = f"UPDATE courses SET {', '.join(updates)} WHERE course_id = %s"
+    params.append(course_id)
+    
+    try:
+        execute_query(query, tuple(params), commit=True)
+        print(f"Course {course_id} updated.")
+        return True
+    except Exception as e:
+        print(f"Error updating course: {e}")
+        return False
+
+def delete_course(course_id):
+    """Delete a course."""
+    try:
+        execute_query("DELETE FROM courses WHERE course_id = %s", (course_id,), commit=True)
+        print(f"Course {course_id} deleted.")
+        return True
+    except Exception as e:
+        print(f"Error deleting course: {e}")
+        return False
+
+def unenroll_student(student_email, course_code):
+    """Unenroll a student from a course."""
+    sid = get_student_id_by_email(student_email)
+    cid = get_course_id_by_code(course_code)
+    
+    if not sid or not cid:
+        print("Student or Course not found.")
+        return False
+        
+    try:
+        execute_query("DELETE FROM enrollments WHERE student_id = %s AND course_id = %s", (sid, cid), commit=True)
+        print(f"Unenrolled {student_email} from {course_code}.")
+        return True
+    except Exception as e:
+        print(f"Error unenrolling student: {e}")
         return False
