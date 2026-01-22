@@ -14,7 +14,7 @@ from src.controllers import (
     get_all_courses, add_course, update_course, delete_course, unenroll_student
 )
 from src.database import execute_query
-from src.reports import generate_roster_report, generate_attendance_report
+from src.reports import generate_official_transcript, generate_company_readiness_ledger
 from src.utils import get_user_input, validate_email, validate_date, validate_score
 
 # Create a global console for rich output
@@ -278,36 +278,30 @@ def menu_student_management():
 
 def menu_reports():
     while True:
-        options = ["1. Student Roster", "2. Attendance Report", "q. Back"]
+        options = ["1. Official Transcript", "2. Company Readiness & Performance Ledger", "q. Back"]
         render_menu("Generate Reports", options)
         choice = input("Select Report: ").strip().lower()
-        
-        if choice == 'q': return
-        
-        print("\nSelect Format:")
-        print("1. CSV")
-        print("2. PDF")
-        
-        f_choice = get_user_input("Format (1-2)")
-        if f_choice is None: return
-        
-        if f_choice == '1':
-            fmt = 'csv'
-        elif f_choice == '2':
-            fmt = 'pdf'
-        else:
-            print("Invalid selection. Defaulting to CSV.")
-            fmt = 'csv'
+
+        if choice == 'q':
+            return
 
         if choice == '1':
-            generate_roster_report(fmt.lower())
-        elif choice == '2':
-            generate_attendance_report(fmt.lower())
-        else:
-            print("Invalid selection.")
+            print("\nSelect Student for Official Transcript:")
+            student = select_student_for_enrollment()
+            if not student:
+                input("No student selected. Press Enter to continue...")
+                continue
+            generate_official_transcript(student.get('student_id'))
+            input("Press Enter to continue...")
             continue
-        
-        input("Press Enter to continue...")
+
+        if choice == '2':
+            # Generate Company Readiness & Performance Ledger
+            generate_company_readiness_ledger()
+            input("Press Enter to continue...")
+            continue
+
+        print("Invalid selection.")
 
 def get_sql_content(filename):
     """Read SQL content from database directory."""
@@ -357,9 +351,10 @@ def menu_stored_procedures():
         params = None
         
         if choice == '1':
-            course_code = get_user_input("Enter Course Code (e.g. TAC-101)")
-            if course_code is None: continue
-            
+            course_code = select_course_for_proc()
+            if course_code is None:
+                continue
+
             raw_sql = get_sql_content("05_view_course_students.sql")
             if raw_sql:
                 # Replace hardcoded value in file with parameter placeholder
@@ -367,13 +362,18 @@ def menu_stored_procedures():
                 params = (course_code,)
                 
         elif choice == '2':
-            sql_file = get_sql_content("06_course_avg_grades.sql")
+            # Launch interactive paginated view for course average grades
+            view_course_avg_paginated()
+            continue
         elif choice == '3':
-            sql_file = get_sql_content("07_low_attendance_risk.sql")
+            view_low_attendance_paginated()
+            continue
         elif choice == '4':
-            sql_file = get_sql_content("08_top_student_ranking.sql")
+            view_top_students()
+            continue
         elif choice == '5':
-            sql_file = get_sql_content("09_enrollment_stats.sql")
+            view_enrollment_stats_paginated()
+            continue
         else:
             print("Invalid selection.")
             continue
@@ -407,12 +407,455 @@ def select_from_list(options, prompt_text):
         except ValueError:
             console.print("Invalid input.", style="red")
 
+
+def select_course_for_proc():
+    """Paginated course selector for stored-proc flows. Returns course_code or None."""
+    offset = 0
+    limit = 10
+
+    # total count
+    res_count = execute_query("SELECT COUNT(*) as cnt FROM courses", fetch=True)
+    total_items = res_count[0]['cnt'] if res_count else 0
+    total_pages = math.ceil(total_items / limit) if total_items else 1
+
+    while True:
+        current_page = (offset // limit) + 1
+        query = f"SELECT course_id, course_code, name, credits FROM courses ORDER BY course_id LIMIT {limit} OFFSET {offset}"
+        courses = execute_query(query, fetch=True)
+
+        console.print(Panel(f"Select Course (Page {current_page} of {max(1, total_pages)})", style="cyan"))
+        if courses:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Credits", style="yellow")
+            for i, c in enumerate(courses, 1):
+                tbl.add_row(str(i), c.get('course_code', ''), c.get('name', ''), str(c.get('credits', '')))
+            console.print(tbl)
+        else:
+            if offset == 0:
+                console.print("No courses found.")
+            else:
+                console.print("No more courses.")
+
+        console.print("Options:", style="bold")
+        console.print(" - Enter Number to select")
+        console.print(" - [s] Search", style="red", markup=False)
+        if current_page < total_pages:
+            console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip()
+        if choice.lower() == 'q':
+            return None
+
+        if choice.lower() == 's':
+            term = get_user_input("Search term (course code or name)")
+            if term is None:
+                continue
+            search_sql = "SELECT course_id, course_code, name, credits FROM courses WHERE course_code ILIKE %s OR name ILIKE %s ORDER BY course_id LIMIT 10"
+            results = execute_query(search_sql, (f"%{term}%", f"%{term}%"), fetch=True)
+            if not results:
+                console.print("No matches found.", style="red")
+                continue
+
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Credits", style="yellow")
+            for i, c in enumerate(results, 1):
+                tbl.add_row(str(i), c.get('course_code', ''), c.get('name', ''), str(c.get('credits', '')))
+            console.print(tbl)
+
+            sel = get_user_input(f"Select (1-{len(results)})", required=False)
+            if sel is None or sel == '':
+                continue
+            try:
+                idx = int(sel) - 1
+                if 0 <= idx < len(results):
+                    return results[idx].get('course_code')
+            except ValueError:
+                console.print("Invalid selection.", style="red")
+            continue
+
+        if choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(courses):
+                return courses[idx].get('course_code')
+            else:
+                console.print("Invalid selection.", style="red")
+        except ValueError:
+            console.print("Invalid input.", style="red")
+
 DEPARTMENTS = [
     "Tactics", "Intelligence", "Engineering", "Leadership", 
     "Weapons", "Cyber Warfare", "Logistics", "Medical", "General"
 ]
 
 DIFFICULTIES = ["Basic", "Intermediate", "Advanced"]
+
+
+def view_course_avg_paginated():
+    """Show course average grades paginated (10 per page), with search and 'all' option."""
+    offset = 0
+    limit = 10
+    search_term = None
+
+    while True:
+        params = []
+        base_query = (
+            "SELECT c.course_code, c.name as course_name, c.department, "
+            "COUNT(e.student_id) as total_students, ROUND(AVG(e.final_score),2) as average_score, "
+            "MAX(e.final_score) as highest_score, MIN(e.final_score) as lowest_score "
+            "FROM courses c JOIN enrollments e ON c.course_id = e.course_id "
+            "WHERE e.status IN ('Completed','Failed') AND e.final_score IS NOT NULL "
+        )
+
+        if search_term:
+            base_query += " AND (c.course_code ILIKE %s OR c.name ILIKE %s) "
+            p = f"%{search_term}%"
+            params.extend([p, p])
+
+        group_order = "GROUP BY c.course_id, c.course_code, c.name, c.department ORDER BY average_score DESC"
+
+        # Compute total distinct courses for pagination (more robust than subquery count)
+        count_query = (
+            "SELECT COUNT(DISTINCT c.course_id) as cnt "
+            "FROM courses c JOIN enrollments e ON c.course_id = e.course_id "
+            "WHERE e.status IN ('Completed','Failed') AND e.final_score IS NOT NULL "
+        )
+        count_params = []
+        if search_term:
+            count_query += " AND (c.course_code ILIKE %s OR c.name ILIKE %s)"
+            count_params = [f"%{search_term}%", f"%{search_term}%"]
+
+        count_res = execute_query(count_query, tuple(count_params) if count_params else None, fetch=True)
+        total_items = count_res[0]['cnt'] if count_res else 0
+        total_pages = math.ceil(total_items / limit) if total_items else 1
+        current_page = (offset // limit) + 1
+
+        # Fetch either a page or all depending on special flag
+        query = base_query + group_order + f" LIMIT {limit} OFFSET {offset}"
+
+        console.print(Panel(f"Course Average Grades (Page {current_page} of {max(1,total_pages)})", style="cyan"))
+        results = execute_query(query, tuple(params) if params else None, fetch=True)
+
+        # Defensive: ensure we only display up to `limit` rows
+        displayed = results[:limit] if results else []
+
+        if displayed:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Dept", style="magenta")
+            tbl.add_column("Students", style="yellow")
+            tbl.add_column("Avg", style="bright_blue")
+            tbl.add_column("High")
+            tbl.add_column("Low")
+            start = offset + 1
+            for i, r in enumerate(displayed, start):
+                tbl.add_row(str(i), r.get('course_code',''), r.get('course_name',''), r.get('department',''),
+                            str(r.get('total_students','')), str(r.get('average_score','')),
+                            str(r.get('highest_score','')), str(r.get('lowest_score','')))
+            console.print(tbl)
+        else:
+            console.print("No results found.")
+
+        console.print("Options:", style="bold")
+        console.print(" - [s] Search", style="red", markup=False)
+        console.print(" - [a] Show All", style="red", markup=False)
+        console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip().lower()
+        if choice == 'q':
+            return
+        if choice == 's':
+            term = get_user_input("Search term (course code or name)")
+            if term is None:
+                continue
+            search_term = term
+            offset = 0
+            continue
+        if choice == 'a':
+            # show all matching courses
+            all_query = base_query + group_order
+            all_res = execute_query(all_query, tuple(count_params) if count_params else None, fetch=True)
+            if all_res:
+                print_results(all_res)
+            else:
+                console.print("No results found.")
+            input("Press Enter to continue...")
+            return
+        if choice == '':
+            # next page
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+        # otherwise loop
+
+
+def view_low_attendance_paginated():
+    """Paginated view for students below attendance threshold with search."""
+    offset = 0
+    limit = 10
+    search_term = None
+
+    while True:
+        params = []
+        base_query = (
+            "SELECT s.service_number, s.first_name, s.last_name, c.company_name, "
+            "ps.attendance_rate, ps.current_standing "
+            "FROM students s "
+            "JOIN performance_summary ps ON s.student_id = ps.student_id "
+            "JOIN companies c ON s.company_id = c.company_id "
+            "WHERE ps.attendance_rate < 75.00 "
+        )
+
+        if search_term:
+            base_query += " AND (s.first_name ILIKE %s OR s.last_name ILIKE %s OR s.service_number ILIKE %s OR c.company_name ILIKE %s) "
+            p = f"%{search_term}%"
+            params.extend([p, p, p, p])
+
+        order_clause = "ORDER BY ps.attendance_rate ASC"
+
+        # Compute total rows for pagination (robust count)
+        count_query = (
+            "SELECT COUNT(*) as cnt "
+            "FROM students s "
+            "JOIN performance_summary ps ON s.student_id = ps.student_id "
+            "JOIN companies c ON s.company_id = c.company_id "
+            "WHERE ps.attendance_rate < 75.00 "
+        )
+        count_params = []
+        if search_term:
+            count_query += " AND (s.first_name ILIKE %s OR s.last_name ILIKE %s OR s.service_number ILIKE %s OR c.company_name ILIKE %s) "
+            p = f"%{search_term}%"
+            count_params = [p, p, p, p]
+
+        count_res = execute_query(count_query, tuple(count_params) if count_params else None, fetch=True)
+        total_items = count_res[0]['cnt'] if count_res else 0
+        total_pages = math.ceil(total_items / limit) if total_items else 1
+        current_page = (offset // limit) + 1
+
+        query = base_query + order_clause + f" LIMIT {limit} OFFSET {offset}"
+
+        console.print(Panel(f"Low Attendance Risk (Page {current_page} of {max(1,total_pages)})", style="cyan"))
+        results = execute_query(query, tuple(params) if params else None, fetch=True)
+
+        # Defensive: only display up to `limit` rows
+        displayed = results[:limit] if results else []
+
+        if displayed:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Service#", style="cyan")
+            tbl.add_column("First", style="green")
+            tbl.add_column("Last", style="green")
+            tbl.add_column("Company", style="magenta")
+            tbl.add_column("Attendance", style="yellow")
+            tbl.add_column("Standing", style="red")
+            start = offset + 1
+            for i, r in enumerate(displayed, start):
+                tbl.add_row(str(i), r.get('service_number',''), r.get('first_name',''), r.get('last_name',''),
+                            r.get('company_name',''), str(r.get('attendance_rate','')), r.get('current_standing',''))
+            console.print(tbl)
+        else:
+            console.print("No results found.")
+
+        console.print("Options:", style="bold")
+        console.print(" - [s] Search", style="red", markup=False)
+        console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip().lower()
+        if choice == 'q':
+            return
+        if choice == 's':
+            term = get_user_input("Search term (name, service number, or company)")
+            if term is None:
+                continue
+            search_term = term
+            offset = 0
+            continue
+        if choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+        # otherwise invalid input -> loop
+
+
+def view_enrollment_stats_paginated():
+    """Paginated view for enrollment stats (10 rows/page) with search and next-page navigation."""
+    offset = 0
+    limit = 10
+    search_term = None
+
+    while True:
+        params = []
+        base_query = (
+            "SELECT c.course_code, c.name as course_name, "
+            "COUNT(e.student_id) as total_enrolled, "
+            "COUNT(CASE WHEN e.status = 'In Progress' THEN 1 END) as in_progress, "
+            "COUNT(CASE WHEN e.status = 'Completed' THEN 1 END) as completed, "
+            "COUNT(CASE WHEN e.status = 'Failed' THEN 1 END) as failed, "
+            "COUNT(CASE WHEN e.status = 'Withdrawn' THEN 1 END) as withdrawn "
+            "FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id "
+            "WHERE 1=1 "
+        )
+
+        if search_term:
+            base_query += " AND (c.course_code ILIKE %s OR c.name ILIKE %s) "
+            p = f"%{search_term}%"
+            params.extend([p, p])
+
+        group_order = "GROUP BY c.course_id, c.course_code, c.name ORDER BY total_enrolled DESC"
+
+        # count total matching rows
+        count_query = "SELECT COUNT(*) as cnt FROM (" + base_query + group_order + ") sub"
+        count_res = execute_query(count_query, tuple(params) if params else None, fetch=True)
+        total_items = count_res[0]['cnt'] if count_res else 0
+        total_pages = math.ceil(total_items / limit) if total_items else 1
+        current_page = (offset // limit) + 1
+
+        # fetch page
+        query = base_query + group_order + f" LIMIT {limit} OFFSET {offset}"
+        results = execute_query(query, tuple(params) if params else None, fetch=True)
+
+        displayed = results[:limit] if results else []
+
+        console.print(Panel(f"Enrollment Stats (Page {current_page} of {max(1,total_pages)})", style="cyan"))
+        if displayed:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Total", style="yellow")
+            tbl.add_column("InProgress")
+            tbl.add_column("Completed")
+            tbl.add_column("Failed")
+            tbl.add_column("Withdrawn")
+            start = offset + 1
+            for i, r in enumerate(displayed, start):
+                tbl.add_row(str(i), r.get('course_code',''), r.get('course_name',''),
+                            str(r.get('total_enrolled','')), str(r.get('in_progress','')),
+                            str(r.get('completed','')), str(r.get('failed','')), str(r.get('withdrawn','')))
+            console.print(tbl)
+        else:
+            console.print("No results found.")
+
+        console.print("Options:", style="bold")
+        console.print(" - [s] Search", style="red", markup=False)
+        console.print(" - [a] Show All", style="red", markup=False)
+        console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip().lower()
+        if choice == 'q':
+            return
+        if choice == 's':
+            term = get_user_input("Search term (course code or name)")
+            if term is None:
+                continue
+            search_term = term
+            offset = 0
+            continue
+        if choice == 'a':
+            all_query = base_query + group_order
+            all_res = execute_query(all_query, tuple(params) if params else None, fetch=True)
+            if all_res:
+                print_results(all_res)
+            else:
+                console.print("No results found.")
+            input("Press Enter to continue...")
+            return
+        if choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+        # otherwise loop
+
+
+def view_top_students():
+    """Show top N students by GPA (default 10). User may enter custom N."""
+    while True:
+        num_in = get_user_input("Number of top students to show (default 10)", required=False)
+        if num_in is None:
+            return
+        if num_in == "":
+            n = 10
+        else:
+            try:
+                n = int(num_in)
+                if n <= 0:
+                    print("Please enter a positive integer.")
+                    continue
+            except ValueError:
+                print("Invalid number. Please enter a positive integer.")
+                continue
+
+        query = f"""
+SELECT
+    RANK() OVER (ORDER BY ps.gpa DESC) AS rank,
+    s.service_number,
+    s.first_name,
+    s.last_name,
+    c.company_name,
+    ps.gpa,
+    ps.total_credits
+FROM
+    students s
+JOIN
+    performance_summary ps ON s.student_id = ps.student_id
+JOIN
+    companies c ON s.company_id = c.company_id
+ORDER BY
+    ps.gpa DESC
+LIMIT {n};
+"""
+
+        results = execute_query(query, fetch=True)
+        if not results:
+            console.print("No students found.")
+            input("Press Enter to continue...")
+            return
+
+        tbl = Table(show_header=True, header_style="bold magenta")
+        tbl.add_column("Rank", style="cyan")
+        tbl.add_column("Service#", style="cyan")
+        tbl.add_column("First", style="green")
+        tbl.add_column("Last", style="green")
+        tbl.add_column("Company", style="magenta")
+        tbl.add_column("GPA", style="bright_blue")
+        tbl.add_column("Credits", style="yellow")
+
+        for r in results:
+            tbl.add_row(str(r.get('rank','')), r.get('service_number',''), r.get('first_name',''),
+                        r.get('last_name',''), r.get('company_name',''), str(r.get('gpa','')), str(r.get('total_credits','')))
+
+        console.print(tbl)
+        input("Press Enter to continue...")
+        return
 
 def perform_add_course():
     print("\n--- Add New Course ---")
@@ -449,16 +892,23 @@ def perform_manage_course(course):
     ccode = course['course_code']
     
     while True:
-        print(f"\n--- Managing Course: {ccode} - {course['name']} ---")
-        print("1. View Enrolled Students")
-        print("2. Enroll Student")
-        print("3. Unenroll Student")
-        print("4. Record Grade")
-        print("5. Mark Attendance")
-        print("6. Update Course Details")
-        print("7. Delete Course")
-        print("q. Back")
-        
+        console.print(Panel(f"Managing Course: {ccode} - {course['name']}", style="cyan"))
+
+        tbl = Table(show_header=True, header_style="bold magenta")
+        tbl.add_column("No.")
+        tbl.add_column("Action", style="green")
+        tbl.add_row("1", "View Enrolled Students")
+        tbl.add_row("2", "Enroll Student")
+        tbl.add_row("3", "Unenroll Student")
+        tbl.add_row("4", "Record Grade")
+        tbl.add_row("5", "Mark Attendance")
+        tbl.add_row("6", "Update Course Details")
+        tbl.add_row("7", "Delete Course")
+        console.print(tbl)
+
+        console.print("Options:", style="bold")
+        console.print(" - [q] Back", style="red", markup=False)
+
         choice = input("\nSelect Option: ").strip().lower()
         
         if choice == '1':
@@ -531,8 +981,8 @@ def perform_manage_course(course):
             return
         else:
             print("Invalid.")
-    """
-    Interactively select a student enrolled in the course.
+def select_enrolled_student(course_code, prompt_action="Select"):
+    """Interactively select a student enrolled in `course_code`.
     Returns the student dict (with id, first, last, email, rank) or None.
     """
     students = get_students_in_course(course_code)
@@ -544,12 +994,12 @@ def perform_manage_course(course):
     limit = 10
     total_items = len(students)
     total_pages = math.ceil(total_items / limit)
-    
+
     while True:
         # Slice for pagination
         page_items = students[offset:offset+limit]
         current_page = (offset // limit) + 1
-        
+
         console.print(Panel(f"Select Student to {prompt_action} (Page {current_page} of {total_pages})", style="cyan"))
         tbl = Table(show_header=True, header_style="bold magenta")
         tbl.add_column("Student ID", style="cyan")
@@ -566,24 +1016,24 @@ def perform_manage_course(course):
         if current_page > 1:
             console.print(" - [p] Previous Page", style="red", markup=False)
         console.print(" - [q] Back", style="red", markup=False)
-        
+
         choice = input("Choice: ").strip()
-        
+
         if choice.lower() == 'q':
             return None
-            
+
         if choice == "":
             if offset + limit < total_items:
                 offset += limit
             elif offset > 0:
-                 offset = 0
-                 print("Restarting list...")
+                offset = 0
+                print("Restarting list...")
             continue
         elif choice.lower() == 'p':
             if offset >= limit:
                 offset -= limit
             continue
-            
+
         # Try to match ID
         try:
             sid_input = int(choice)
@@ -777,94 +1227,7 @@ def select_student_for_enrollment():
         except ValueError:
             print("Invalid input.")
 
-def perform_manage_course(course):
-    """Sub-menu for a specific course."""
-    cid = course['course_id']
-    ccode = course['course_code']
-    
-    while True:
-        print(f"\n--- Managing Course: {ccode} - {course['name']} ---")
-        print("1. View Enrolled Students")
-        print("2. Enroll Student")
-        print("3. Unenroll Student")
-        print("4. Record Grade")
-        print("5. Mark Attendance")
-        print("6. Update Course Details")
-        print("7. Delete Course")
-        print("q. Back")
-        
-        choice = input("\nSelect Option: ").strip().lower()
-        
-        if choice == '1':
-            perform_view_enrolled_students(ccode, course['name'])
-        elif choice == '2':
-            student = select_student_for_enrollment()
-            if student:
-                date_str = str(date.today())
-                if enroll_student(student['email'], ccode, date_str):
-                    print(f"\nSUCCESS: Enrolled {student['first_name']} {student['last_name']} ({student['rank']})")
-                    print(f"Details: ID={student['student_id']}, Email={student['email']}, Course={ccode}")
-                input("Press Enter to continue...")
-        elif choice == '3':
-            # Unenroll with selector and confirmation
-            student = select_enrolled_student(ccode, "Unenroll")
-            if student:
-                 print(f"\n--- Confirm Unenrollment ---")
-                 print(f"Student: {student['first_name']} {student['last_name']} (ID: {student['student_id']})")
-                 print(f"Rank:    {student.get('rank', 'N/A')}")
-                 print(f"Email:   {student['email']}")
-                 print(f"Course:  {ccode} - {course['name']}")
-                 
-                 confirm = get_user_input("Are you sure you want to unenroll this student? (y/n)")
-                 if confirm and confirm.lower() == 'y':
-                     unenroll_student(student['email'], ccode)
-                 else:
-                     print("Aborted.")
-                 input("Press Enter to continue...")
-        elif choice == '4':
-            manage_grades_workflow(ccode, course['name'])
-        elif choice == '5':
-            manage_attendance_workflow(ccode, course['name'])
-        elif choice == '6':
-             print(f"Update {ccode}. Leave blank to keep current.")
-             n_name = get_user_input(f"Name [{course['name']}]", required=False)
-             
-             n_credits = None
-             c_in = get_user_input(f"Credits [{course.get('credits', '')}]", required=False)
-             if c_in:
-                 try: n_credits = int(c_in)
-                 except: print("Invalid credits ignored.")
-             
-             print(f"Current Department: {course.get('department')}")
-             n_dept = select_from_list(DEPARTMENTS, "New Department (Enter to skip)")
-             if n_dept == "": n_dept = None
-             
-             print(f"Current Difficulty: {course.get('difficulty_level')}")
-             n_diff = select_from_list(DIFFICULTIES, "New Difficulty (Enter to skip)")
-             if n_diff == "": n_diff = None
-             
-             n_desc = get_user_input(f"Description [{course.get('description','')}]", required=False)
-             
-             if update_course(cid, n_name, n_credits, n_dept, n_diff, n_desc):
-                 # Update local view
-                 if n_name: course['name'] = n_name
-                 if n_credits: course['credits'] = n_credits
-                 if n_dept: course['department'] = n_dept
-                 if n_diff: course['difficulty_level'] = n_diff
-                 if n_desc: course['description'] = n_desc
-             input("Press Enter to continue...")
-        elif choice == '7':
-            confirm = get_user_input(f"Delete course {ccode}? This cannot be undone. (y/n)")
-            if confirm and confirm.lower() == 'y':
-                if delete_course(cid):
-                    input("Deleted. Press Enter...")
-                    return # Exit management view as course is gone
-            else:
-                print("Cancelled.")
-        elif choice == 'q':
-            return
-        else:
-            print("Invalid.")
+# Duplicate older definition removed — using the updated `perform_manage_course` above.
 
 def menu_course_management():
     """List courses and allow management."""
@@ -897,13 +1260,16 @@ def menu_course_management():
             else:
                 console.print("No more courses.")
 
-        console.print("Options:", style="bold")
-        console.print(" - Enter Number to Manage Course")
+        # Show options similar to view students menu
+        opts = ["Enter Number to Manage Course"]
         if current_page < total_pages:
-            console.print(" - [Enter] Next Page", style="red", markup=False)
-        console.print(" - [a] Add Course", style="red", markup=False)
-        console.print(" - [q] Back", style="red", markup=False)
-        
+            opts.append("[Enter] Next Page")
+        opts.append("[a] Add Course")
+        opts.append("[q] Back")
+        console.print("Options:", style="bold")
+        for opt in opts:
+            console.print(f" - {opt}", style="red", markup=False)
+
         choice = input("Select: ").strip().lower()
         
         if choice == 'q':
