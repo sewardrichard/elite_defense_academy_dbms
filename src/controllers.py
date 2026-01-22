@@ -115,3 +115,176 @@ def mark_attendance(email, course_code, date, status, remarks=None):
     else:
         print("Failed to mark attendance.")
         return False
+
+def update_student(student_id, first_name=None, last_name=None, email=None, dob=None, gender=None, rank=None):
+    """Update student details."""
+    updates = []
+    params = []
+    
+    if first_name:
+        updates.append("first_name = %s")
+        params.append(first_name)
+    if last_name:
+        updates.append("last_name = %s")
+        params.append(last_name)
+    if email:
+        updates.append("email = %s")
+        params.append(email)
+    if dob:
+        updates.append("date_of_birth = %s")
+        params.append(dob)
+    if gender:
+        updates.append("gender = %s")
+        params.append(gender)
+    if rank:
+        updates.append("rank = %s")
+        params.append(rank)
+        
+    if not updates:
+        print("No changes provided.")
+        return False
+        
+    updates.append("updated_at = CURRENT_TIMESTAMP")
+    
+    query = f"UPDATE students SET {', '.join(updates)} WHERE student_id = %s"
+    params.append(student_id)
+    
+    try:
+        execute_query(query, tuple(params), commit=True)
+        print(f"Student {student_id} updated successfully.")
+        return True
+    except Exception as e:
+        print(f"Error updating student: {e}")
+        return False
+
+def delete_student(student_id):
+    """Delete a student by ID."""
+    # Note: This might fail if there are foreign key constraints without cascade.
+    # We will attempt to delete and catch errors.
+    query = "DELETE FROM students WHERE student_id = %s"
+    try:
+        execute_query(query, (student_id,), commit=True)
+        print(f"Student {student_id} deleted successfully.")
+        return True
+    except Exception as e:
+        print(f"Error deleting student (check for enrolled courses/records): {e}")
+        return False
+
+def get_student_enrollments(email):
+    """Get list of courses a student is enrolled in."""
+    sid = get_student_id_by_email(email)
+    if not sid:
+        return None
+    
+    query = """
+        SELECT c.course_code, c.name, e.status, e.final_score
+        FROM enrollments e
+        JOIN courses c ON e.course_id = c.course_id
+        WHERE e.student_id = %s
+    """
+    return execute_query(query, (sid,), fetch=True)
+
+def get_student_grades(email, course_code):
+    """Get grades for a specific student and course."""
+    enrollment_id = get_enrollment_id(email, course_code)
+    if not enrollment_id:
+        return None
+        
+    query = """
+        SELECT grade_id, assessment_type, score, weight, assessment_date, remarks
+        FROM grades
+        WHERE enrollment_id = %s
+        ORDER BY assessment_date DESC
+    """
+    return execute_query(query, (enrollment_id,), fetch=True)
+
+def update_grade(grade_id, score=None, weight=None, remarks=None):
+    """Update a specific grade entry."""
+    updates = []
+    params = []
+    
+    if score is not None:
+        updates.append("score = %s")
+        params.append(score)
+    if weight is not None:
+        updates.append("weight = %s")
+        params.append(weight)
+    if remarks is not None:
+        updates.append("remarks = %s")
+        params.append(remarks)
+        
+    if not updates:
+        return False
+        
+    query = f"UPDATE grades SET {', '.join(updates)} WHERE grade_id = %s"
+    params.append(grade_id)
+    
+    try:
+        execute_query(query, tuple(params), commit=True)
+        print(f"Grade {grade_id} updated.")
+        return True
+    except Exception as e:
+        print(f"Error updating grade: {e}")
+        return False
+
+def delete_grade(grade_id):
+    """Delete a grade entry."""
+    try:
+        execute_query("DELETE FROM grades WHERE grade_id = %s", (grade_id,), commit=True)
+        print(f"Grade {grade_id} deleted.")
+        return True
+    except Exception as e:
+        print(f"Error deleting grade: {e}")
+        return False
+
+def get_student_attendance(email, course_code):
+    """Get attendance records for a student in a course."""
+    sid = get_student_id_by_email(email)
+    cid = get_course_id_by_code(course_code)
+    if not sid or not cid:
+        return None
+        
+    query = """
+        SELECT attendance_id, muster_date, status, remarks
+        FROM attendance
+        WHERE student_id = %s AND course_id = %s
+        ORDER BY muster_date DESC
+    """
+    return execute_query(query, (sid, cid), fetch=True)
+
+def update_attendance(attendance_id, status=None, remarks=None):
+    """Update attendance record."""
+    updates = []
+    params = []
+    
+    if status:
+        updates.append("status = %s")
+        params.append(status)
+    if remarks is not None:
+        updates.append("remarks = %s")
+        params.append(remarks)
+        
+    if not updates:
+        return False
+        
+    updates.append("updated_at = CURRENT_TIMESTAMP")
+    query = f"UPDATE attendance SET {', '.join(updates)} WHERE attendance_id = %s"
+    params.append(attendance_id)
+    
+    try:
+        execute_query(query, tuple(params), commit=True)
+        print(f"Attendance {attendance_id} updated.")
+        return True
+    except Exception as e:
+        print(f"Error updating attendance: {e}")
+        return False
+
+def delete_attendance(attendance_id):
+    """Delete attendance record."""
+    try:
+        execute_query("DELETE FROM attendance WHERE attendance_id = %s", (attendance_id,), commit=True)
+        print(f"Attendance {attendance_id} deleted.")
+        return True
+    except Exception as e:
+        print(f"Error deleting attendance: {e}")
+        return False
