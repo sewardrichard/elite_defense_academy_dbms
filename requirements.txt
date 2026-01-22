@@ -3,3 +3,4 @@ psycopg2-binary==2.9.9
 pandas==2.2.0
 openpyxl==3.1.2
 textual==0.79.1
+reportlab>=3.6.12

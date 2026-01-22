@@ -14,7 +14,7 @@ from src.controllers import (
     get_all_courses, add_course, update_course, delete_course, unenroll_student
 )
 from src.database import execute_query
-from src.reports import generate_roster_report, generate_attendance_report
+from src.reports import generate_official_transcript, generate_company_readiness_ledger
 from src.utils import get_user_input, validate_email, validate_date, validate_score
 
 # Create a global console for rich output
@@ -278,36 +278,30 @@ def menu_student_management():
 
 def menu_reports():
     while True:
-        options = ["1. Student Roster", "2. Attendance Report", "q. Back"]
+        options = ["1. Official Transcript", "2. Company Readiness & Performance Ledger", "q. Back"]
         render_menu("Generate Reports", options)
         choice = input("Select Report: ").strip().lower()
-        
-        if choice == 'q': return
-        
-        print("\nSelect Format:")
-        print("1. CSV")
-        print("2. PDF")
-        
-        f_choice = get_user_input("Format (1-2)")
-        if f_choice is None: return
-        
-        if f_choice == '1':
-            fmt = 'csv'
-        elif f_choice == '2':
-            fmt = 'pdf'
-        else:
-            print("Invalid selection. Defaulting to CSV.")
-            fmt = 'csv'
+
+        if choice == 'q':
+            return
 
         if choice == '1':
-            generate_roster_report(fmt.lower())
-        elif choice == '2':
-            generate_attendance_report(fmt.lower())
-        else:
-            print("Invalid selection.")
+            print("\nSelect Student for Official Transcript:")
+            student = select_student_for_enrollment()
+            if not student:
+                input("No student selected. Press Enter to continue...")
+                continue
+            generate_official_transcript(student.get('student_id'))
+            input("Press Enter to continue...")
             continue
-        
-        input("Press Enter to continue...")
+
+        if choice == '2':
+            # Generate Company Readiness & Performance Ledger
+            generate_company_readiness_ledger()
+            input("Press Enter to continue...")
+            continue
+
+        print("Invalid selection.")
 
 def get_sql_content(filename):
     """Read SQL content from database directory."""
@@ -449,16 +443,23 @@ def perform_manage_course(course):
     ccode = course['course_code']
     
     while True:
-        print(f"\n--- Managing Course: {ccode} - {course['name']} ---")
-        print("1. View Enrolled Students")
-        print("2. Enroll Student")
-        print("3. Unenroll Student")
-        print("4. Record Grade")
-        print("5. Mark Attendance")
-        print("6. Update Course Details")
-        print("7. Delete Course")
-        print("q. Back")
-        
+        console.print(Panel(f"Managing Course: {ccode} - {course['name']}", style="cyan"))
+
+        tbl = Table(show_header=True, header_style="bold magenta")
+        tbl.add_column("No.")
+        tbl.add_column("Action", style="green")
+        tbl.add_row("1", "View Enrolled Students")
+        tbl.add_row("2", "Enroll Student")
+        tbl.add_row("3", "Unenroll Student")
+        tbl.add_row("4", "Record Grade")
+        tbl.add_row("5", "Mark Attendance")
+        tbl.add_row("6", "Update Course Details")
+        tbl.add_row("7", "Delete Course")
+        console.print(tbl)
+
+        console.print("Options:", style="bold")
+        console.print(" - [q] Back", style="red", markup=False)
+
         choice = input("\nSelect Option: ").strip().lower()
         
         if choice == '1':
@@ -531,8 +532,8 @@ def perform_manage_course(course):
             return
         else:
             print("Invalid.")
-    """
-    Interactively select a student enrolled in the course.
+def select_enrolled_student(course_code, prompt_action="Select"):
+    """Interactively select a student enrolled in `course_code`.
     Returns the student dict (with id, first, last, email, rank) or None.
     """
     students = get_students_in_course(course_code)
@@ -544,12 +545,12 @@ def perform_manage_course(course):
     limit = 10
     total_items = len(students)
     total_pages = math.ceil(total_items / limit)
-    
+
     while True:
         # Slice for pagination
         page_items = students[offset:offset+limit]
         current_page = (offset // limit) + 1
-        
+
         console.print(Panel(f"Select Student to {prompt_action} (Page {current_page} of {total_pages})", style="cyan"))
         tbl = Table(show_header=True, header_style="bold magenta")
         tbl.add_column("Student ID", style="cyan")
@@ -566,24 +567,24 @@ def perform_manage_course(course):
         if current_page > 1:
             console.print(" - [p] Previous Page", style="red", markup=False)
         console.print(" - [q] Back", style="red", markup=False)
-        
+
         choice = input("Choice: ").strip()
-        
+
         if choice.lower() == 'q':
             return None
-            
+
         if choice == "":
             if offset + limit < total_items:
                 offset += limit
             elif offset > 0:
-                 offset = 0
-                 print("Restarting list...")
+                offset = 0
+                print("Restarting list...")
             continue
         elif choice.lower() == 'p':
             if offset >= limit:
                 offset -= limit
             continue
-            
+
         # Try to match ID
         try:
             sid_input = int(choice)
@@ -777,94 +778,7 @@ def select_student_for_enrollment():
         except ValueError:
             print("Invalid input.")
 
-def perform_manage_course(course):
-    """Sub-menu for a specific course."""
-    cid = course['course_id']
-    ccode = course['course_code']
-    
-    while True:
-        print(f"\n--- Managing Course: {ccode} - {course['name']} ---")
-        print("1. View Enrolled Students")
-        print("2. Enroll Student")
-        print("3. Unenroll Student")
-        print("4. Record Grade")
-        print("5. Mark Attendance")
-        print("6. Update Course Details")
-        print("7. Delete Course")
-        print("q. Back")
-        
-        choice = input("\nSelect Option: ").strip().lower()
-        
-        if choice == '1':
-            perform_view_enrolled_students(ccode, course['name'])
-        elif choice == '2':
-            student = select_student_for_enrollment()
-            if student:
-                date_str = str(date.today())
-                if enroll_student(student['email'], ccode, date_str):
-                    print(f"\nSUCCESS: Enrolled {student['first_name']} {student['last_name']} ({student['rank']})")
-                    print(f"Details: ID={student['student_id']}, Email={student['email']}, Course={ccode}")
-                input("Press Enter to continue...")
-        elif choice == '3':
-            # Unenroll with selector and confirmation
-            student = select_enrolled_student(ccode, "Unenroll")
-            if student:
-                 print(f"\n--- Confirm Unenrollment ---")
-                 print(f"Student: {student['first_name']} {student['last_name']} (ID: {student['student_id']})")
-                 print(f"Rank:    {student.get('rank', 'N/A')}")
-                 print(f"Email:   {student['email']}")
-                 print(f"Course:  {ccode} - {course['name']}")
-                 
-                 confirm = get_user_input("Are you sure you want to unenroll this student? (y/n)")
-                 if confirm and confirm.lower() == 'y':
-                     unenroll_student(student['email'], ccode)
-                 else:
-                     print("Aborted.")
-                 input("Press Enter to continue...")
-        elif choice == '4':
-            manage_grades_workflow(ccode, course['name'])
-        elif choice == '5':
-            manage_attendance_workflow(ccode, course['name'])
-        elif choice == '6':
-             print(f"Update {ccode}. Leave blank to keep current.")
-             n_name = get_user_input(f"Name [{course['name']}]", required=False)
-             
-             n_credits = None
-             c_in = get_user_input(f"Credits [{course.get('credits', '')}]", required=False)
-             if c_in:
-                 try: n_credits = int(c_in)
-                 except: print("Invalid credits ignored.")
-             
-             print(f"Current Department: {course.get('department')}")
-             n_dept = select_from_list(DEPARTMENTS, "New Department (Enter to skip)")
-             if n_dept == "": n_dept = None
-             
-             print(f"Current Difficulty: {course.get('difficulty_level')}")
-             n_diff = select_from_list(DIFFICULTIES, "New Difficulty (Enter to skip)")
-             if n_diff == "": n_diff = None
-             
-             n_desc = get_user_input(f"Description [{course.get('description','')}]", required=False)
-             
-             if update_course(cid, n_name, n_credits, n_dept, n_diff, n_desc):
-                 # Update local view
-                 if n_name: course['name'] = n_name
-                 if n_credits: course['credits'] = n_credits
-                 if n_dept: course['department'] = n_dept
-                 if n_diff: course['difficulty_level'] = n_diff
-                 if n_desc: course['description'] = n_desc
-             input("Press Enter to continue...")
-        elif choice == '7':
-            confirm = get_user_input(f"Delete course {ccode}? This cannot be undone. (y/n)")
-            if confirm and confirm.lower() == 'y':
-                if delete_course(cid):
-                    input("Deleted. Press Enter...")
-                    return # Exit management view as course is gone
-            else:
-                print("Cancelled.")
-        elif choice == 'q':
-            return
-        else:
-            print("Invalid.")
+# Duplicate older definition removed — using the updated `perform_manage_course` above.
 
 def menu_course_management():
     """List courses and allow management."""
@@ -897,13 +811,16 @@ def menu_course_management():
             else:
                 console.print("No more courses.")
 
-        console.print("Options:", style="bold")
-        console.print(" - Enter Number to Manage Course")
+        # Show options similar to view students menu
+        opts = ["Enter Number to Manage Course"]
         if current_page < total_pages:
-            console.print(" - [Enter] Next Page", style="red", markup=False)
-        console.print(" - [a] Add Course", style="red", markup=False)
-        console.print(" - [q] Back", style="red", markup=False)
-        
+            opts.append("[Enter] Next Page")
+        opts.append("[a] Add Course")
+        opts.append("[q] Back")
+        console.print("Options:", style="bold")
+        for opt in opts:
+            console.print(f" - {opt}", style="red", markup=False)
+
         choice = input("Select: ").strip().lower()
         
         if choice == 'q':

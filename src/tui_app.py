@@ -409,9 +409,7 @@ class ReportsView(Container):
         yield Label("Analytics Dashboard", classes="section-title")
         yield Horizontal(
             Vertical(
-                Button("Course Rosters", id="rep_rosters", classes="report-btn"),
                 Button("Course Performance", id="rep_performance", classes="report-btn"),
-                Button("At-Risk Students", id="rep_risk", classes="report-btn"),
                 Button("Honor Roll", id="rep_honor", classes="report-btn"),
                 Button("Enrollment Stats", id="rep_stats", classes="report-btn"),
                 id="report_sidebar",
@@ -429,12 +427,8 @@ class ReportsView(Container):
         table.clear(columns=True)
         
         sql_file = ""
-        if btn_id == "rep_rosters":
-            sql_file = "05_view_course_students.sql"
-        elif btn_id == "rep_performance":
+        if btn_id == "rep_performance":
             sql_file = "06_course_avg_grades.sql"
-        elif btn_id == "rep_risk":
-            sql_file = "07_low_attendance_risk.sql"
         elif btn_id == "rep_honor":
             sql_file = "08_top_student_ranking.sql"
         elif btn_id == "rep_stats":
