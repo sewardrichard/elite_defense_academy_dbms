@@ -2,6 +2,9 @@ import sys
 import math
 from datetime import date
 import os
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
 from src.controllers import (
     add_student, enroll_student, record_grade, mark_attendance, 
     update_student, delete_student, get_student_id_by_email, get_student_details,
@@ -14,10 +17,22 @@ from src.database import execute_query
 from src.reports import generate_roster_report, generate_attendance_report
 from src.utils import get_user_input, validate_email, validate_date, validate_score
 
+# Create a global console for rich output
+console = Console()
+
+
 def print_header():
-    print("\n" + "="*40)
-    print("   ELITE DEFENSE ACADEMY DBMS")
-    print("="*40)
+    console.rule("ELITE DEFENSE ACADEMY DBMS", style="bold cyan")
+
+
+def render_menu(title, options):
+    """Render a simple menu using Rich Table."""
+    console.print(Panel(f"{title}", style="bold cyan"))
+    table = Table(show_header=False, box=None)
+    table.add_column("option", style="bold green")
+    for opt in options:
+        table.add_row(opt)
+    console.print(table)
 
 def perform_add_student():
     print("\n--- Add New Student ---")
@@ -165,14 +180,15 @@ def perform_delete_student():
 
 def menu_student_management():
     while True:
-        print("\n--- Student Management (CRUD) ---")
-        print("1. Add Student (Create)")
-        print("2. List Students (Read)")
-        print("3. Update Student")
-        print("4. Delete Student")
-        print("q. Back")
-        
-        choice = input("\nSelect Option: ").strip().lower()
+        options = [
+            "1. Add Student (Create)",
+            "2. List Students (Read)",
+            "3. Update Student",
+            "4. Delete Student",
+            "q. Back",
+        ]
+        render_menu("Student Management (CRUD)", options)
+        choice = input("Select Option: ").strip().lower()
         
         if choice == '1':
             perform_add_student()
@@ -226,7 +242,8 @@ def menu_student_management():
                 if search_term:
                     nav_opts.insert(1, "[c] Clear Search")
                 
-                print("\nOptions: " + " | ".join(nav_opts))
+                console.print("Options:", style="bold")
+                console.print(" | ".join(nav_opts), style="red", markup=False)
                 nav = input("Select Action: ").strip().lower()
                 
                 if nav == 'q':
@@ -261,12 +278,9 @@ def menu_student_management():
 
 def menu_reports():
     while True:
-        print("\n--- Generate Reports ---")
-        print("1. Student Roster")
-        print("2. Attendance Report")
-        print("q. Back")
-        
-        choice = input("\nSelect Report: ").strip().lower()
+        options = ["1. Student Roster", "2. Attendance Report", "q. Back"]
+        render_menu("Generate Reports", options)
+        choice = input("Select Report: ").strip().lower()
         
         if choice == 'q': return
         
@@ -312,40 +326,30 @@ def print_results(results):
     if not results:
         print("No results found.")
         return
-
-    # Get headers
     headers = list(results[0].keys())
-    
-    # Calculate widths
-    widths = {h: len(h) for h in headers}
+    table = Table(show_header=True, header_style="bold magenta")
+    for h in headers:
+        table.add_column(h)
+
     for row in results:
-        for h in headers:
-            val = str(row.get(h, ''))
-            widths[h] = max(widths[h], len(val))
-    
-    # Create format string
-    fmt = " | ".join([f"{{:<{widths[h]}}}" for h in headers])
-    separator = "-+-".join(["-" * widths[h] for h in headers])
-    
-    # Print table
-    print("\n" + fmt.format(*headers))
-    print(separator)
-    for row in results:
-        values = [str(row.get(h, '')) for h in headers]
-        print(fmt.format(*values))
-    print(f"\n({len(results)} rows)\n")
+        values = [str(row.get(h, "")) for h in headers]
+        table.add_row(*values)
+
+    console.print(table)
+    console.print(f"({len(results)} rows)", style="dim")
 
 def menu_stored_procedures():
     while True:
-        print("\n--- Stored Procedures & Views ---")
-        print("1. View Students in Course (05)")
-        print("2. Course Average Grades (06)")
-        print("3. Low Attendance Risk (07)")
-        print("4. Top Student Ranking (08)")
-        print("5. Enrollment Stats (09)")
-        print("q. Back")
-        
-        choice = input("\nSelect Option: ").strip().lower()
+        options = [
+            "1. View Students in Course (05)",
+            "2. Course Average Grades (06)",
+            "3. Low Attendance Risk (07)",
+            "4. Top Student Ranking (08)",
+            "5. Enrollment Stats (09)",
+            "q. Back",
+        ]
+        render_menu("Stored Procedures & Views", options)
+        choice = input("Select Option: ").strip().lower()
         
         if choice == 'q': return
         
@@ -383,9 +387,8 @@ def menu_stored_procedures():
 
 def select_from_list(options, prompt_text):
     """Helper to display a numbered list and get selection."""
-    print(f"\n{prompt_text}:")
-    for i, opt in enumerate(options, 1):
-        print(f"{i}. {opt}")
+    opts = [f"{i}. {opt}" for i, opt in enumerate(options, 1)]
+    render_menu(prompt_text, opts)
         
     while True:
         choice = get_user_input(f"Select (1-{len(options)})", required=False)
@@ -400,9 +403,9 @@ def select_from_list(options, prompt_text):
             if 0 <= auth_idx < len(options):
                 return options[auth_idx]
             else:
-                print("Invalid number.")
+                console.print("Invalid number.", style="red")
         except ValueError:
-            print("Invalid input.")
+            console.print("Invalid input.", style="red")
 
 DEPARTMENTS = [
     "Tactics", "Intelligence", "Engineering", "Leadership", 
@@ -547,17 +550,22 @@ def perform_manage_course(course):
         page_items = students[offset:offset+limit]
         current_page = (offset // limit) + 1
         
-        print(f"\n--- Select Student to {prompt_action} (Page {current_page} of {total_pages}) ---")
-        for i, s in enumerate(page_items, 1):
-             print(f"{s['student_id']}. {s['first_name']} {s['last_name']} ({s['rank']})")
-             
-        print("\nOptions:")
-        print(" - Enter Student ID to Select")
+        console.print(Panel(f"Select Student to {prompt_action} (Page {current_page} of {total_pages})", style="cyan"))
+        tbl = Table(show_header=True, header_style="bold magenta")
+        tbl.add_column("Student ID", style="cyan")
+        tbl.add_column("Name", style="green")
+        tbl.add_column("Rank", style="yellow")
+        for s in page_items:
+            tbl.add_row(str(s.get('student_id', '')), f"{s.get('first_name','')} {s.get('last_name','')}", str(s.get('rank','')))
+        console.print(tbl)
+
+        console.print("Options:", style="bold")
+        console.print(" - Enter Student ID to Select")
         if current_page < total_pages:
-            print(" - [Enter] Next Page")
+            console.print(" - [Enter] Next Page", style="red", markup=False)
         if current_page > 1:
-            print(" - [p] Previous Page")
-        print(" - [q] Back")
+            console.print(" - [p] Previous Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
         
         choice = input("Choice: ").strip()
         
@@ -602,19 +610,21 @@ def perform_view_enrolled_students(course_code, course_name):
     while True:
         page_items = students[offset:offset+limit]
         current_page = (offset // limit) + 1
-        
-        print(f"\n--- Enrolled Students: {course_code} (Page {current_page} of {total_pages}) ---")
-        # Reuse print_results or custom format? Custom is often nicer for specific views
-        # print_results(page_items) 
-        # Using custom loop for consistency with other lists
+
+        console.print(Panel(f"Enrolled Students: {course_code} (Page {current_page} of {total_pages})", style="cyan"))
+        tbl = Table(show_header=True, header_style="bold magenta")
+        tbl.add_column("ID", style="cyan")
+        tbl.add_column("Rank", style="yellow")
+        tbl.add_column("Name", style="green")
+        tbl.add_column("Email", style="blue")
         for s in page_items:
-             print(f"ID: {s['student_id']} | {s['rank']} {s['first_name']} {s['last_name']} | {s['email']}")
-             
-        print("\nOptions:")
+            tbl.add_row(str(s.get('student_id','')), str(s.get('rank','')), f"{s.get('first_name','')} {s.get('last_name','')}", s.get('email',''))
+        console.print(tbl)
+
+        console.print("Options:", style="bold")
         if current_page < total_pages:
-             print(" - [Enter] Next Page")
-        
-        print(" - [q] Back")
+            console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
         
         choice = input("Choice: ").strip().lower()
         
@@ -642,11 +652,8 @@ def perform_add_grade_context(email, course_code):
         '6': {'name': 'Final Exam', 'weight': 0.5}
     }
     
-    print("Select Assessment Type:")
-    for k, v in assessments.items():
-        w_str = f" (Weight: {v['weight']})" if v['weight'] else ""
-        print(f"{k}. {v['name']}{w_str}")
-        
+    options = [f"{k}. {v['name']} (Weight: {v['weight']})" for k, v in assessments.items()]
+    render_menu("Select Assessment Type", options)
     choice = get_user_input("Choice (1-6)")
     if choice is None: return
     
@@ -686,10 +693,8 @@ def perform_mark_attendance_context(email, course_code):
         '5': 'AWOL'
     }
     
-    print("Select Status:")
-    for k, v in statuses.items():
-        print(f"{k}. {v}")
-        
+    options = [f"{k}. {v}" for k, v in statuses.items()]
+    render_menu("Select Status", options)
     choice = get_user_input("Choice (1-5)")
     if choice is None: return
     
@@ -743,11 +748,11 @@ def select_student_for_enrollment():
         else:
             print_results(students)
             
-        print("\nOptions:")
-        print(" - Enter Student ID to select")
+        console.print("Options:", style="bold")
+        console.print(" - Enter Student ID to select")
         if current_page < total_pages:
-            print(" - [Enter] Next Page")
-        print(" - [q] Back")
+            console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
         
         choice = input("Choice: ").strip()
         
@@ -876,22 +881,28 @@ def menu_course_management():
         query = f"SELECT course_id, course_code, name, credits FROM courses ORDER BY course_id LIMIT {limit} OFFSET {offset}"
         courses = execute_query(query, fetch=True)
         
-        print(f"\n--- Course Management (Page {current_page} of {max(1, total_pages)}) ---")
+        console.print(Panel(f"Course Management (Page {current_page} of {max(1, total_pages)})", style="cyan"))
         if courses:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Credits", style="yellow")
             for i, c in enumerate(courses, 1):
-                print(f"{i}. {c['course_code']} - {c['name']} ({c['credits']} cr)")
+                tbl.add_row(str(i), c.get('course_code',''), c.get('name',''), str(c.get('credits','')))
+            console.print(tbl)
         else:
             if offset == 0:
-                print("No courses found.")
+                console.print("No courses found.")
             else:
-                print("No more courses.")
-        
-        print("\nOptions:")
-        print(" - Enter Number to Manage Course")
+                console.print("No more courses.")
+
+        console.print("Options:", style="bold")
+        console.print(" - Enter Number to Manage Course")
         if current_page < total_pages:
-            print(" - [Enter] Next Page")
-        print(" - [a] Add Course")
-        print(" - [q] Back")
+            console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [a] Add Course", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
         
         choice = input("Select: ").strip().lower()
         
@@ -921,13 +932,15 @@ def menu_course_management():
 def main():
     while True:
         print_header()
-        print("1. Student Management")
-        print("2. Course Management")
-        print("3. Generate Reports")
-        print("4. Stored Procedures")
-        print("q. Exit")
-        
-        choice = input("\nSelect an option: ").strip().lower()
+        options = [
+            "1. Student Management",
+            "2. Course Management",
+            "3. Generate Reports",
+            "4. Stored Procedures",
+            "q. Exit",
+        ]
+        render_menu("Main Menu", options)
+        choice = input("Select an option: ").strip().lower()
         
         if choice == '1':
             menu_student_management()
