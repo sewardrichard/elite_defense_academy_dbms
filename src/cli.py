@@ -1,4 +1,5 @@
 import sys
+import math
 from datetime import date
 import os
 from src.controllers import (
@@ -184,18 +185,27 @@ def menu_student_management():
             while True:
                 params = []
                 base_query = "SELECT student_id, first_name, last_name, email, rank FROM students"
+                count_query = "SELECT COUNT(*) as cnt FROM students"
                 
                 if search_term:
-                    base_query += " WHERE first_name ILIKE %s OR last_name ILIKE %s OR email ILIKE %s OR rank ILIKE %s OR CAST(student_id AS TEXT) ILIKE %s"
+                    where_clause = " WHERE first_name ILIKE %s OR last_name ILIKE %s OR email ILIKE %s OR rank ILIKE %s OR CAST(student_id AS TEXT) ILIKE %s"
+                    base_query += where_clause
+                    count_query += where_clause
                     p = f"%{search_term}%"
                     params = [p, p, p, p, p]
-                    header = f"Search Results for '{search_term}'"
+                    header_prefix = f"Search Results for '{search_term}'"
                 else:
-                    header = "All Students"
+                    header_prefix = "All Students"
+                
+                # Get total count first
+                count_res = execute_query(count_query, tuple(params), fetch=True)
+                total_items = count_res[0]['cnt'] if count_res else 0
+                total_pages = math.ceil(total_items / limit)
+                current_page = (offset // limit) + 1
                 
                 query = base_query + f" ORDER BY student_id LIMIT {limit} OFFSET {offset}"
                 
-                print(f"\n--- {header} (Rows {offset+1} to {offset+limit}) ---")
+                print(f"\n--- {header_prefix} (Page {current_page} of {max(1, total_pages)}) ---")
                 res = execute_query(query, tuple(params), fetch=True)
                 
                 if res:
@@ -207,11 +217,14 @@ def menu_student_management():
                         print("No more records.")
                 
                 # Navigation Menu
-                nav_opts = ["[s] Search", "[q] Back"]
+                nav_opts = ["[s] Search"]
+                if current_page < total_pages:
+                    nav_opts.append("[Enter] Next Page")
+                    
+                nav_opts.append("[q] Back")
+                
                 if search_term:
                     nav_opts.insert(1, "[c] Clear Search")
-                if res and len(res) == limit:
-                    nav_opts.insert(0, "[Enter] Next Page")
                 
                 print("\nOptions: " + " | ".join(nav_opts))
                 nav = input("Select Action: ").strip().lower()
@@ -228,10 +241,12 @@ def menu_student_management():
                     offset = 0
                 elif nav == '':
                     # Next page request
-                    if res and len(res) == limit:
+                    if offset + limit < total_items:
                         offset += limit
-                    else:
-                        print("End of list.")
+                    elif total_items > 0:
+                        # Optionally loop back or stay
+                         offset = 0
+                         print("Restarting list...")
                 else:
                     pass # Just refresh
                 
@@ -255,10 +270,19 @@ def menu_reports():
         
         if choice == 'q': return
         
-        fmt = get_user_input("Format (csv/pdf)")
-        if fmt is None: return
-        if fmt.lower() not in ['csv', 'pdf']:
-            print("Invalid format. Defaulting to CSV.")
+        print("\nSelect Format:")
+        print("1. CSV")
+        print("2. PDF")
+        
+        f_choice = get_user_input("Format (1-2)")
+        if f_choice is None: return
+        
+        if f_choice == '1':
+            fmt = 'csv'
+        elif f_choice == '2':
+            fmt = 'pdf'
+        else:
+            print("Invalid selection. Defaulting to CSV.")
             fmt = 'csv'
 
         if choice == '1':
@@ -357,6 +381,36 @@ def menu_stored_procedures():
         
         input("Press Enter to continue...")
 
+def select_from_list(options, prompt_text):
+    """Helper to display a numbered list and get selection."""
+    print(f"\n{prompt_text}:")
+    for i, opt in enumerate(options, 1):
+        print(f"{i}. {opt}")
+        
+    while True:
+        choice = get_user_input(f"Select (1-{len(options)})", required=False)
+        if choice is None: return None # User cancelled or empty (if allowed)
+        # If user enters nothing for optional updates, we handle it outside or here?
+        # For Add, we usually need selection. For Update, empty means no change.
+        # Let's assumes this returns the string selected or None.
+        if choice == "": return "" 
+        
+        try:
+            auth_idx = int(choice) - 1
+            if 0 <= auth_idx < len(options):
+                return options[auth_idx]
+            else:
+                print("Invalid number.")
+        except ValueError:
+            print("Invalid input.")
+
+DEPARTMENTS = [
+    "Tactics", "Intelligence", "Engineering", "Leadership", 
+    "Weapons", "Cyber Warfare", "Logistics", "Medical", "General"
+]
+
+DIFFICULTIES = ["Basic", "Intermediate", "Advanced"]
+
 def perform_add_course():
     print("\n--- Add New Course ---")
     
@@ -374,100 +428,16 @@ def perform_add_course():
         print("Invalid credits.")
         return
         
-    dept = get_user_input("Department")
-    if dept is None: return
+    dept = select_from_list(DEPARTMENTS, "Select Department")
+    if not dept: return
     
-    diff = get_user_input("Difficulty (Basic/Intermediate/Advanced)", required=False) or "Basic"
+    diff = select_from_list(DIFFICULTIES, "Select Difficulty")
+    if not diff: diff = "Basic"
+    
     desc = get_user_input("Description", required=False)
     
-    add_course(code, name, credits, dept, diff, desc)
-    input("Press Enter to continue...")
-
-def perform_course_action_with_student_selection(course_code, action_type):
-    """
-    Generic helper to select a student from a course and perform an action (Grade/Attendance).
-    Paginated list of enrolled students.
-    """
-    students = get_students_in_course(course_code)
-    if not students:
-        print("No students enrolled in this course.")
-        return
-
-    offset = 0
-    limit = 10
-    
-    while True:
-        # Slice for pagination
-        page_items = students[offset:offset+limit]
-        
-        print(f"\n--- Select Student for {action_type} (Page {offset//limit + 1}) ---")
-        for i, s in enumerate(page_items, 1):
-             print(f"{s['student_id']}. {s['first_name']} {s['last_name']} ({s['email']})")
-             
-        print("\nOptions:")
-        print(" - Enter Student ID to Select")
-        print(" - [Enter] Next Page")
-        print(" - [q] Back")
-        
-        choice = input("Choice: ").strip()
-        
-        if choice.lower() == 'q':
-            return
-            
-        if choice == "":
-            if offset + limit < len(students):
-                offset += limit
-            else:
-                 offset = 0
-                 print("Restarting list...")
-            continue
-            
-        # Try to match ID
-        try:
-            sid_input = int(choice)
-            selected_student = next((s for s in students if s['student_id'] == sid_input), None)
-            if selected_student:
-                # Perform Action
-                if action_type == "Grade":
-                     perform_add_grade_context(selected_student['email'], course_code)
-                elif action_type == "Attendance":
-                     perform_mark_attendance_context(selected_student['email'], course_code)
-                return # Return to course menu after action
-            else:
-                print("Invalid Student ID from list.")
-        except ValueError:
-            print("Invalid input.")
-
-def perform_add_grade_context(email, course_code):
-    print(f"\nAdding Grade for {email} in {course_code}")
-    atype = get_user_input("Assessment Type (Exam, Quiz, etc)")
-    if atype is None: return
-
-    score = get_user_input("Score (0-100)", validator=validate_score)
-    if score is None: return
-
-    weight = get_user_input("Weight (0.0 - 1.0)")
-    if weight is None: return
-    try:
-        w_float = float(weight)
-    except:
-        print("Invalid weight.")
-        return
-
-    remarks = get_user_input("Remarks", required=False)
-    record_grade(email, course_code, atype, float(score), w_float, remarks)
-    input("Press Enter to continue...")
-
-def perform_mark_attendance_context(email, course_code):
-    print(f"\nMarking Attendance for {email} in {course_code}")
-    dt = get_user_input("Date (YYYY-MM-DD)", validator=validate_date) or str(date.today())
-    if dt is None: return
-
-    status = get_user_input("Status (Present/Absent/Late/Excused)")
-    if status is None: return
-    
-    remarks = get_user_input("Remarks", required=False)
-    mark_attendance(email, course_code, dt, status, remarks)
+    if add_course(code, name, credits, dept, diff, desc):
+        print("\nCourse successfully added to database.")
     input("Press Enter to continue...")
 
 def perform_manage_course(course):
@@ -477,34 +447,48 @@ def perform_manage_course(course):
     
     while True:
         print(f"\n--- Managing Course: {ccode} - {course['name']} ---")
-        print("1. Enroll Student")
-        print("2. Unenroll Student")
-        print("3. Record Grade")
-        print("4. Mark Attendance")
-        print("5. Update Course Details")
-        print("6. Delete Course")
-        print("0. Back")
+        print("1. View Enrolled Students")
+        print("2. Enroll Student")
+        print("3. Unenroll Student")
+        print("4. Record Grade")
+        print("5. Mark Attendance")
+        print("6. Update Course Details")
+        print("7. Delete Course")
+        print("q. Back")
         
-        choice = input("\nSelect Option: ").strip()
+        choice = input("\nSelect Option: ").strip().lower()
         
         if choice == '1':
-            email = get_user_input("Student Email", validator=validate_email)
-            if email:
-                date_str = str(date.today())
-                enroll_student(email, ccode, date_str)
-                input("Press Enter to continue...")
+            perform_view_enrolled_students(ccode, course['name'])
         elif choice == '2':
-            email = get_user_input("Student Email", validator=validate_email)
-            if email:
-                confirm = get_user_input(f"Unenroll {email} from {ccode}? (y/n)")
-                if confirm and confirm.lower() == 'y':
-                    unenroll_student(email, ccode)
+            student = select_student_for_enrollment()
+            if student:
+                date_str = str(date.today())
+                if enroll_student(student['email'], ccode, date_str):
+                    print(f"\nSUCCESS: Enrolled {student['first_name']} {student['last_name']} ({student['rank']})")
+                    print(f"Details: ID={student['student_id']}, Email={student['email']}, Course={ccode}")
                 input("Press Enter to continue...")
         elif choice == '3':
-            perform_course_action_with_student_selection(ccode, "Grade")
+            # Unenroll with selector and confirmation
+            student = select_enrolled_student(ccode, "Unenroll")
+            if student:
+                 print(f"\n--- Confirm Unenrollment ---")
+                 print(f"Student: {student['first_name']} {student['last_name']} (ID: {student['student_id']})")
+                 print(f"Rank:    {student.get('rank', 'N/A')}")
+                 print(f"Email:   {student['email']}")
+                 print(f"Course:  {ccode} - {course['name']}")
+                 
+                 confirm = get_user_input("Are you sure you want to unenroll this student? (y/n)")
+                 if confirm and confirm.lower() == 'y':
+                     unenroll_student(student['email'], ccode)
+                 else:
+                     print("Aborted.")
+                 input("Press Enter to continue...")
         elif choice == '4':
-            perform_course_action_with_student_selection(ccode, "Attendance")
+            manage_grades_workflow(ccode, course['name'])
         elif choice == '5':
+            manage_attendance_workflow(ccode, course['name'])
+        elif choice == '6':
              print(f"Update {ccode}. Leave blank to keep current.")
              n_name = get_user_input(f"Name [{course['name']}]", required=False)
              
@@ -514,8 +498,14 @@ def perform_manage_course(course):
                  try: n_credits = int(c_in)
                  except: print("Invalid credits ignored.")
              
-             n_dept = get_user_input(f"Department [{course.get('department','')}]", required=False)
-             n_diff = get_user_input(f"Difficulty [{course.get('difficulty_level','')}]", required=False)
+             print(f"Current Department: {course.get('department')}")
+             n_dept = select_from_list(DEPARTMENTS, "New Department (Enter to skip)")
+             if n_dept == "": n_dept = None
+             
+             print(f"Current Difficulty: {course.get('difficulty_level')}")
+             n_diff = select_from_list(DIFFICULTIES, "New Difficulty (Enter to skip)")
+             if n_diff == "": n_diff = None
+             
              n_desc = get_user_input(f"Description [{course.get('description','')}]", required=False)
              
              if update_course(cid, n_name, n_credits, n_dept, n_diff, n_desc):
@@ -526,7 +516,339 @@ def perform_manage_course(course):
                  if n_diff: course['difficulty_level'] = n_diff
                  if n_desc: course['description'] = n_desc
              input("Press Enter to continue...")
+        elif choice == '7':
+            confirm = get_user_input(f"Delete course {ccode}? This cannot be undone. (y/n)")
+            if confirm and confirm.lower() == 'y':
+                if delete_course(cid):
+                    input("Deleted. Press Enter...")
+                    return # Exit management view as course is gone
+            else:
+                print("Cancelled.")
+        elif choice == 'q':
+            return
+        else:
+            print("Invalid.")
+    """
+    Interactively select a student enrolled in the course.
+    Returns the student dict (with id, first, last, email, rank) or None.
+    """
+    students = get_students_in_course(course_code)
+    if not students:
+        print("No students enrolled in this course.")
+        return None
+
+    offset = 0
+    limit = 10
+    total_items = len(students)
+    total_pages = math.ceil(total_items / limit)
+    
+    while True:
+        # Slice for pagination
+        page_items = students[offset:offset+limit]
+        current_page = (offset // limit) + 1
+        
+        print(f"\n--- Select Student to {prompt_action} (Page {current_page} of {total_pages}) ---")
+        for i, s in enumerate(page_items, 1):
+             print(f"{s['student_id']}. {s['first_name']} {s['last_name']} ({s['rank']})")
+             
+        print("\nOptions:")
+        print(" - Enter Student ID to Select")
+        if current_page < total_pages:
+            print(" - [Enter] Next Page")
+        if current_page > 1:
+            print(" - [p] Previous Page")
+        print(" - [q] Back")
+        
+        choice = input("Choice: ").strip()
+        
+        if choice.lower() == 'q':
+            return None
+            
+        if choice == "":
+            if offset + limit < total_items:
+                offset += limit
+            elif offset > 0:
+                 offset = 0
+                 print("Restarting list...")
+            continue
+        elif choice.lower() == 'p':
+            if offset >= limit:
+                offset -= limit
+            continue
+            
+        # Try to match ID
+        try:
+            sid_input = int(choice)
+            selected_student = next((s for s in students if s['student_id'] == sid_input), None)
+            if selected_student:
+                return selected_student
+            else:
+                print("Invalid Student ID from list.")
+        except ValueError:
+            print("Invalid input.")
+
+def perform_view_enrolled_students(course_code, course_name):
+    """View all students enrolled in a course with pagination."""
+    students = get_students_in_course(course_code)
+    if not students:
+        print("No students enrolled in this course.")
+        return
+
+    offset = 0
+    limit = 10
+    total_items = len(students)
+    total_pages = math.ceil(total_items / limit)
+    
+    while True:
+        page_items = students[offset:offset+limit]
+        current_page = (offset // limit) + 1
+        
+        print(f"\n--- Enrolled Students: {course_code} (Page {current_page} of {total_pages}) ---")
+        # Reuse print_results or custom format? Custom is often nicer for specific views
+        # print_results(page_items) 
+        # Using custom loop for consistency with other lists
+        for s in page_items:
+             print(f"ID: {s['student_id']} | {s['rank']} {s['first_name']} {s['last_name']} | {s['email']}")
+             
+        print("\nOptions:")
+        if current_page < total_pages:
+             print(" - [Enter] Next Page")
+        
+        print(" - [q] Back")
+        
+        choice = input("Choice: ").strip().lower()
+        
+        if choice == 'q':
+            return
+        elif choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            else:
+                 offset = 0 # loop back
+        else:
+            print("Invalid.")
+
+def perform_add_grade_context(email, course_code):
+    print(f"\nAdding Grade for {email} in {course_code}")
+    
+    # Define Assessment Types with Weights
+    # Constraint allow list: 'Exam', 'Practical', 'Quiz', 'Assignment', 'Field Exercise', 'Final Exam'
+    assessments = {
+        '1': {'name': 'Exam', 'weight': 0.4},
+        '2': {'name': 'Quiz', 'weight': 0.1},
+        '3': {'name': 'Assignment', 'weight': 0.1},
+        '4': {'name': 'Practical', 'weight': 0.2},
+        '5': {'name': 'Field Exercise', 'weight': 0.3},
+        '6': {'name': 'Final Exam', 'weight': 0.5}
+    }
+    
+    print("Select Assessment Type:")
+    for k, v in assessments.items():
+        w_str = f" (Weight: {v['weight']})" if v['weight'] else ""
+        print(f"{k}. {v['name']}{w_str}")
+        
+    choice = get_user_input("Choice (1-6)")
+    if choice is None: return
+    
+    info = assessments.get(choice)
+    if not info:
+        print("Invalid selection.")
+        return
+        
+    atype = info['name']
+    weight = info['weight']
+    
+    # Confirm or Edit Weight?
+    # User requested preset weights. We use them directly.
+    # User asked: "should the weights not total 1.0" - usually yes, but for a single entry we just adding one.
+    
+    score = get_user_input("Score (0-100)", validator=validate_score)
+    if score is None: return
+    
+    remarks = get_user_input("Remarks", required=False)
+    
+    record_grade(email, course_code, atype, float(score), weight, remarks)
+    input("Press Enter to continue...")
+
+def perform_mark_attendance_context(email, course_code):
+    print(f"\nMarking Attendance for {email} in {course_code}")
+    
+    # 1. Date defaults to today
+    dt = str(date.today())
+    print(f"Date: {dt}")
+    
+    # 2. Status Menu
+    statuses = {
+        '1': 'Present',
+        '2': 'Absent',
+        '3': 'Late',
+        '4': 'Excused',
+        '5': 'AWOL'
+    }
+    
+    print("Select Status:")
+    for k, v in statuses.items():
+        print(f"{k}. {v}")
+        
+    choice = get_user_input("Choice (1-5)")
+    if choice is None: return
+    
+    status = statuses.get(choice)
+    if not status:
+        print("Invalid status selection.")
+        return
+    
+    remarks = get_user_input("Remarks", required=False)
+    mark_attendance(email, course_code, dt, status, remarks)
+    input("Press Enter to continue...")
+
+def manage_grades_workflow(course_code, course_name):
+    """Persistent workflow for recording grades."""
+    while True:
+        # Pass action name to prompt correctly
+        student = select_enrolled_student(course_code, f"Grade in {course_code}")
+        if not student:
+            break
+        perform_add_grade_context(student['email'], course_code)
+
+def manage_attendance_workflow(course_code, course_name):
+    """Persistent workflow for marking attendance."""
+    while True:
+        student = select_enrolled_student(course_code, f"Mark Attendance in {course_code}")
+        if not student:
+            break
+        perform_mark_attendance_context(student['email'], course_code)
+
+def select_student_for_enrollment():
+    """Interactive student selection (paginated, descending ID)."""
+    offset = 0
+    limit = 5
+    
+    # Get total count first for "Page X of Y"
+    res_count = execute_query("SELECT COUNT(*) as cnt FROM students", fetch=True)
+    total_items = res_count[0]['cnt'] if res_count else 0
+    total_pages = math.ceil(total_items / limit)
+    
+    while True:
+        current_page = (offset // limit) + 1
+        print(f"\nScanning for students (Page {current_page} of {max(1, total_pages)})...")
+        # Note: Sorting by ID DESC changes the "pages" conceptually but the count is same.
+        query = f"SELECT student_id, first_name, last_name, email, rank FROM students ORDER BY student_id DESC LIMIT {limit} OFFSET {offset}"
+        students = execute_query(query, fetch=True)
+        
+        if not students:
+             print("No students found.")
+             # If offset is 0 and no students, return. Else we might be at end.
+             if offset == 0: return None
+        else:
+            print_results(students)
+            
+        print("\nOptions:")
+        print(" - Enter Student ID to select")
+        if current_page < total_pages:
+            print(" - [Enter] Next Page")
+        print(" - [q] Back")
+        
+        choice = input("Choice: ").strip()
+        
+        if choice.lower() == 'q':
+            return None
+            
+        if choice == "":
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                print("Restarting list...")
+            continue
+            
+        try:
+            sid = int(choice)
+            details = get_student_details(sid)
+            if details:
+                return details
+            else:
+                print("Student not found.")
+        except ValueError:
+            print("Invalid input.")
+
+def perform_manage_course(course):
+    """Sub-menu for a specific course."""
+    cid = course['course_id']
+    ccode = course['course_code']
+    
+    while True:
+        print(f"\n--- Managing Course: {ccode} - {course['name']} ---")
+        print("1. View Enrolled Students")
+        print("2. Enroll Student")
+        print("3. Unenroll Student")
+        print("4. Record Grade")
+        print("5. Mark Attendance")
+        print("6. Update Course Details")
+        print("7. Delete Course")
+        print("q. Back")
+        
+        choice = input("\nSelect Option: ").strip().lower()
+        
+        if choice == '1':
+            perform_view_enrolled_students(ccode, course['name'])
+        elif choice == '2':
+            student = select_student_for_enrollment()
+            if student:
+                date_str = str(date.today())
+                if enroll_student(student['email'], ccode, date_str):
+                    print(f"\nSUCCESS: Enrolled {student['first_name']} {student['last_name']} ({student['rank']})")
+                    print(f"Details: ID={student['student_id']}, Email={student['email']}, Course={ccode}")
+                input("Press Enter to continue...")
+        elif choice == '3':
+            # Unenroll with selector and confirmation
+            student = select_enrolled_student(ccode, "Unenroll")
+            if student:
+                 print(f"\n--- Confirm Unenrollment ---")
+                 print(f"Student: {student['first_name']} {student['last_name']} (ID: {student['student_id']})")
+                 print(f"Rank:    {student.get('rank', 'N/A')}")
+                 print(f"Email:   {student['email']}")
+                 print(f"Course:  {ccode} - {course['name']}")
+                 
+                 confirm = get_user_input("Are you sure you want to unenroll this student? (y/n)")
+                 if confirm and confirm.lower() == 'y':
+                     unenroll_student(student['email'], ccode)
+                 else:
+                     print("Aborted.")
+                 input("Press Enter to continue...")
+        elif choice == '4':
+            manage_grades_workflow(ccode, course['name'])
+        elif choice == '5':
+            manage_attendance_workflow(ccode, course['name'])
         elif choice == '6':
+             print(f"Update {ccode}. Leave blank to keep current.")
+             n_name = get_user_input(f"Name [{course['name']}]", required=False)
+             
+             n_credits = None
+             c_in = get_user_input(f"Credits [{course.get('credits', '')}]", required=False)
+             if c_in:
+                 try: n_credits = int(c_in)
+                 except: print("Invalid credits ignored.")
+             
+             print(f"Current Department: {course.get('department')}")
+             n_dept = select_from_list(DEPARTMENTS, "New Department (Enter to skip)")
+             if n_dept == "": n_dept = None
+             
+             print(f"Current Difficulty: {course.get('difficulty_level')}")
+             n_diff = select_from_list(DIFFICULTIES, "New Difficulty (Enter to skip)")
+             if n_diff == "": n_diff = None
+             
+             n_desc = get_user_input(f"Description [{course.get('description','')}]", required=False)
+             
+             if update_course(cid, n_name, n_credits, n_dept, n_diff, n_desc):
+                 # Update local view
+                 if n_name: course['name'] = n_name
+                 if n_credits: course['credits'] = n_credits
+                 if n_dept: course['department'] = n_dept
+                 if n_diff: course['difficulty_level'] = n_diff
+                 if n_desc: course['description'] = n_desc
+             input("Press Enter to continue...")
+        elif choice == '7':
             confirm = get_user_input(f"Delete course {ccode}? This cannot be undone. (y/n)")
             if confirm and confirm.lower() == 'y':
                 if delete_course(cid):
@@ -544,11 +866,17 @@ def menu_course_management():
     offset = 0
     limit = 10
     
+    # Get total count
+    res_count = execute_query("SELECT COUNT(*) as cnt FROM courses", fetch=True)
+    total_items = res_count[0]['cnt'] if res_count else 0
+    total_pages = math.ceil(total_items / limit)
+    
     while True:
+        current_page = (offset // limit) + 1
         query = f"SELECT course_id, course_code, name, credits FROM courses ORDER BY course_id LIMIT {limit} OFFSET {offset}"
         courses = execute_query(query, fetch=True)
         
-        print(f"\n--- Course Management (Page {offset//limit + 1}) ---")
+        print(f"\n--- Course Management (Page {current_page} of {max(1, total_pages)}) ---")
         if courses:
             for i, c in enumerate(courses, 1):
                 print(f"{i}. {c['course_code']} - {c['name']} ({c['credits']} cr)")
@@ -560,7 +888,8 @@ def menu_course_management():
         
         print("\nOptions:")
         print(" - Enter Number to Manage Course")
-        print(" - [Enter] Next Page")
+        if current_page < total_pages:
+            print(" - [Enter] Next Page")
         print(" - [a] Add Course")
         print(" - [q] Back")
         
@@ -571,9 +900,9 @@ def menu_course_management():
         elif choice == 'a':
             perform_add_course()
         elif choice == '':
-            if courses and len(courses) == limit:
+            if offset + limit < total_items:
                 offset += limit
-            elif not courses and offset > 0:
+            elif total_items > 0:
                  offset = 0 
                  print("Restarting list...")
             else:

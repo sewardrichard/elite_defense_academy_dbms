@@ -32,7 +32,7 @@ def get_students_in_course(course_code):
     if not cid: return None
     
     query = """
-        SELECT s.student_id, s.first_name, s.last_name, s.email, e.enrollment_id 
+        SELECT s.student_id, s.first_name, s.last_name, s.email, s.rank, e.enrollment_id 
         FROM enrollments e
         JOIN students s ON e.student_id = s.student_id
         WHERE e.course_id = %s
