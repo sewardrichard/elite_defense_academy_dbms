@@ -362,13 +362,18 @@ def menu_stored_procedures():
                 params = (course_code,)
                 
         elif choice == '2':
-            sql_file = get_sql_content("06_course_avg_grades.sql")
+            # Launch interactive paginated view for course average grades
+            view_course_avg_paginated()
+            continue
         elif choice == '3':
-            sql_file = get_sql_content("07_low_attendance_risk.sql")
+            view_low_attendance_paginated()
+            continue
         elif choice == '4':
-            sql_file = get_sql_content("08_top_student_ranking.sql")
+            view_top_students()
+            continue
         elif choice == '5':
-            sql_file = get_sql_content("09_enrollment_stats.sql")
+            view_enrollment_stats_paginated()
+            continue
         else:
             print("Invalid selection.")
             continue
@@ -498,6 +503,359 @@ DEPARTMENTS = [
 ]
 
 DIFFICULTIES = ["Basic", "Intermediate", "Advanced"]
+
+
+def view_course_avg_paginated():
+    """Show course average grades paginated (10 per page), with search and 'all' option."""
+    offset = 0
+    limit = 10
+    search_term = None
+
+    while True:
+        params = []
+        base_query = (
+            "SELECT c.course_code, c.name as course_name, c.department, "
+            "COUNT(e.student_id) as total_students, ROUND(AVG(e.final_score),2) as average_score, "
+            "MAX(e.final_score) as highest_score, MIN(e.final_score) as lowest_score "
+            "FROM courses c JOIN enrollments e ON c.course_id = e.course_id "
+            "WHERE e.status IN ('Completed','Failed') AND e.final_score IS NOT NULL "
+        )
+
+        if search_term:
+            base_query += " AND (c.course_code ILIKE %s OR c.name ILIKE %s) "
+            p = f"%{search_term}%"
+            params.extend([p, p])
+
+        group_order = "GROUP BY c.course_id, c.course_code, c.name, c.department ORDER BY average_score DESC"
+
+        # Compute total distinct courses for pagination (more robust than subquery count)
+        count_query = (
+            "SELECT COUNT(DISTINCT c.course_id) as cnt "
+            "FROM courses c JOIN enrollments e ON c.course_id = e.course_id "
+            "WHERE e.status IN ('Completed','Failed') AND e.final_score IS NOT NULL "
+        )
+        count_params = []
+        if search_term:
+            count_query += " AND (c.course_code ILIKE %s OR c.name ILIKE %s)"
+            count_params = [f"%{search_term}%", f"%{search_term}%"]
+
+        count_res = execute_query(count_query, tuple(count_params) if count_params else None, fetch=True)
+        total_items = count_res[0]['cnt'] if count_res else 0
+        total_pages = math.ceil(total_items / limit) if total_items else 1
+        current_page = (offset // limit) + 1
+
+        # Fetch either a page or all depending on special flag
+        query = base_query + group_order + f" LIMIT {limit} OFFSET {offset}"
+
+        console.print(Panel(f"Course Average Grades (Page {current_page} of {max(1,total_pages)})", style="cyan"))
+        results = execute_query(query, tuple(params) if params else None, fetch=True)
+
+        # Defensive: ensure we only display up to `limit` rows
+        displayed = results[:limit] if results else []
+
+        if displayed:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Dept", style="magenta")
+            tbl.add_column("Students", style="yellow")
+            tbl.add_column("Avg", style="bright_blue")
+            tbl.add_column("High")
+            tbl.add_column("Low")
+            start = offset + 1
+            for i, r in enumerate(displayed, start):
+                tbl.add_row(str(i), r.get('course_code',''), r.get('course_name',''), r.get('department',''),
+                            str(r.get('total_students','')), str(r.get('average_score','')),
+                            str(r.get('highest_score','')), str(r.get('lowest_score','')))
+            console.print(tbl)
+        else:
+            console.print("No results found.")
+
+        console.print("Options:", style="bold")
+        console.print(" - [s] Search", style="red", markup=False)
+        console.print(" - [a] Show All", style="red", markup=False)
+        console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip().lower()
+        if choice == 'q':
+            return
+        if choice == 's':
+            term = get_user_input("Search term (course code or name)")
+            if term is None:
+                continue
+            search_term = term
+            offset = 0
+            continue
+        if choice == 'a':
+            # show all matching courses
+            all_query = base_query + group_order
+            all_res = execute_query(all_query, tuple(count_params) if count_params else None, fetch=True)
+            if all_res:
+                print_results(all_res)
+            else:
+                console.print("No results found.")
+            input("Press Enter to continue...")
+            return
+        if choice == '':
+            # next page
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+        # otherwise loop
+
+
+def view_low_attendance_paginated():
+    """Paginated view for students below attendance threshold with search."""
+    offset = 0
+    limit = 10
+    search_term = None
+
+    while True:
+        params = []
+        base_query = (
+            "SELECT s.service_number, s.first_name, s.last_name, c.company_name, "
+            "ps.attendance_rate, ps.current_standing "
+            "FROM students s "
+            "JOIN performance_summary ps ON s.student_id = ps.student_id "
+            "JOIN companies c ON s.company_id = c.company_id "
+            "WHERE ps.attendance_rate < 75.00 "
+        )
+
+        if search_term:
+            base_query += " AND (s.first_name ILIKE %s OR s.last_name ILIKE %s OR s.service_number ILIKE %s OR c.company_name ILIKE %s) "
+            p = f"%{search_term}%"
+            params.extend([p, p, p, p])
+
+        order_clause = "ORDER BY ps.attendance_rate ASC"
+
+        # Compute total rows for pagination (robust count)
+        count_query = (
+            "SELECT COUNT(*) as cnt "
+            "FROM students s "
+            "JOIN performance_summary ps ON s.student_id = ps.student_id "
+            "JOIN companies c ON s.company_id = c.company_id "
+            "WHERE ps.attendance_rate < 75.00 "
+        )
+        count_params = []
+        if search_term:
+            count_query += " AND (s.first_name ILIKE %s OR s.last_name ILIKE %s OR s.service_number ILIKE %s OR c.company_name ILIKE %s) "
+            p = f"%{search_term}%"
+            count_params = [p, p, p, p]
+
+        count_res = execute_query(count_query, tuple(count_params) if count_params else None, fetch=True)
+        total_items = count_res[0]['cnt'] if count_res else 0
+        total_pages = math.ceil(total_items / limit) if total_items else 1
+        current_page = (offset // limit) + 1
+
+        query = base_query + order_clause + f" LIMIT {limit} OFFSET {offset}"
+
+        console.print(Panel(f"Low Attendance Risk (Page {current_page} of {max(1,total_pages)})", style="cyan"))
+        results = execute_query(query, tuple(params) if params else None, fetch=True)
+
+        # Defensive: only display up to `limit` rows
+        displayed = results[:limit] if results else []
+
+        if displayed:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Service#", style="cyan")
+            tbl.add_column("First", style="green")
+            tbl.add_column("Last", style="green")
+            tbl.add_column("Company", style="magenta")
+            tbl.add_column("Attendance", style="yellow")
+            tbl.add_column("Standing", style="red")
+            start = offset + 1
+            for i, r in enumerate(displayed, start):
+                tbl.add_row(str(i), r.get('service_number',''), r.get('first_name',''), r.get('last_name',''),
+                            r.get('company_name',''), str(r.get('attendance_rate','')), r.get('current_standing',''))
+            console.print(tbl)
+        else:
+            console.print("No results found.")
+
+        console.print("Options:", style="bold")
+        console.print(" - [s] Search", style="red", markup=False)
+        console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip().lower()
+        if choice == 'q':
+            return
+        if choice == 's':
+            term = get_user_input("Search term (name, service number, or company)")
+            if term is None:
+                continue
+            search_term = term
+            offset = 0
+            continue
+        if choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+        # otherwise invalid input -> loop
+
+
+def view_enrollment_stats_paginated():
+    """Paginated view for enrollment stats (10 rows/page) with search and next-page navigation."""
+    offset = 0
+    limit = 10
+    search_term = None
+
+    while True:
+        params = []
+        base_query = (
+            "SELECT c.course_code, c.name as course_name, "
+            "COUNT(e.student_id) as total_enrolled, "
+            "COUNT(CASE WHEN e.status = 'In Progress' THEN 1 END) as in_progress, "
+            "COUNT(CASE WHEN e.status = 'Completed' THEN 1 END) as completed, "
+            "COUNT(CASE WHEN e.status = 'Failed' THEN 1 END) as failed, "
+            "COUNT(CASE WHEN e.status = 'Withdrawn' THEN 1 END) as withdrawn "
+            "FROM courses c LEFT JOIN enrollments e ON c.course_id = e.course_id "
+            "WHERE 1=1 "
+        )
+
+        if search_term:
+            base_query += " AND (c.course_code ILIKE %s OR c.name ILIKE %s) "
+            p = f"%{search_term}%"
+            params.extend([p, p])
+
+        group_order = "GROUP BY c.course_id, c.course_code, c.name ORDER BY total_enrolled DESC"
+
+        # count total matching rows
+        count_query = "SELECT COUNT(*) as cnt FROM (" + base_query + group_order + ") sub"
+        count_res = execute_query(count_query, tuple(params) if params else None, fetch=True)
+        total_items = count_res[0]['cnt'] if count_res else 0
+        total_pages = math.ceil(total_items / limit) if total_items else 1
+        current_page = (offset // limit) + 1
+
+        # fetch page
+        query = base_query + group_order + f" LIMIT {limit} OFFSET {offset}"
+        results = execute_query(query, tuple(params) if params else None, fetch=True)
+
+        displayed = results[:limit] if results else []
+
+        console.print(Panel(f"Enrollment Stats (Page {current_page} of {max(1,total_pages)})", style="cyan"))
+        if displayed:
+            tbl = Table(show_header=True, header_style="bold magenta")
+            tbl.add_column("No.")
+            tbl.add_column("Code", style="cyan")
+            tbl.add_column("Name", style="green")
+            tbl.add_column("Total", style="yellow")
+            tbl.add_column("InProgress")
+            tbl.add_column("Completed")
+            tbl.add_column("Failed")
+            tbl.add_column("Withdrawn")
+            start = offset + 1
+            for i, r in enumerate(displayed, start):
+                tbl.add_row(str(i), r.get('course_code',''), r.get('course_name',''),
+                            str(r.get('total_enrolled','')), str(r.get('in_progress','')),
+                            str(r.get('completed','')), str(r.get('failed','')), str(r.get('withdrawn','')))
+            console.print(tbl)
+        else:
+            console.print("No results found.")
+
+        console.print("Options:", style="bold")
+        console.print(" - [s] Search", style="red", markup=False)
+        console.print(" - [a] Show All", style="red", markup=False)
+        console.print(" - [Enter] Next Page", style="red", markup=False)
+        console.print(" - [q] Back", style="red", markup=False)
+
+        choice = input("Select: ").strip().lower()
+        if choice == 'q':
+            return
+        if choice == 's':
+            term = get_user_input("Search term (course code or name)")
+            if term is None:
+                continue
+            search_term = term
+            offset = 0
+            continue
+        if choice == 'a':
+            all_query = base_query + group_order
+            all_res = execute_query(all_query, tuple(params) if params else None, fetch=True)
+            if all_res:
+                print_results(all_res)
+            else:
+                console.print("No results found.")
+            input("Press Enter to continue...")
+            return
+        if choice == '':
+            if offset + limit < total_items:
+                offset += limit
+            elif total_items > 0:
+                offset = 0
+                console.print("Restarting list...")
+            continue
+        # otherwise loop
+
+
+def view_top_students():
+    """Show top N students by GPA (default 10). User may enter custom N."""
+    while True:
+        num_in = get_user_input("Number of top students to show (default 10)", required=False)
+        if num_in is None:
+            return
+        if num_in == "":
+            n = 10
+        else:
+            try:
+                n = int(num_in)
+                if n <= 0:
+                    print("Please enter a positive integer.")
+                    continue
+            except ValueError:
+                print("Invalid number. Please enter a positive integer.")
+                continue
+
+        query = f"""
+SELECT
+    RANK() OVER (ORDER BY ps.gpa DESC) AS rank,
+    s.service_number,
+    s.first_name,
+    s.last_name,
+    c.company_name,
+    ps.gpa,
+    ps.total_credits
+FROM
+    students s
+JOIN
+    performance_summary ps ON s.student_id = ps.student_id
+JOIN
+    companies c ON s.company_id = c.company_id
+ORDER BY
+    ps.gpa DESC
+LIMIT {n};
+"""
+
+        results = execute_query(query, fetch=True)
+        if not results:
+            console.print("No students found.")
+            input("Press Enter to continue...")
+            return
+
+        tbl = Table(show_header=True, header_style="bold magenta")
+        tbl.add_column("Rank", style="cyan")
+        tbl.add_column("Service#", style="cyan")
+        tbl.add_column("First", style="green")
+        tbl.add_column("Last", style="green")
+        tbl.add_column("Company", style="magenta")
+        tbl.add_column("GPA", style="bright_blue")
+        tbl.add_column("Credits", style="yellow")
+
+        for r in results:
+            tbl.add_row(str(r.get('rank','')), r.get('service_number',''), r.get('first_name',''),
+                        r.get('last_name',''), r.get('company_name',''), str(r.get('gpa','')), str(r.get('total_credits','')))
+
+        console.print(tbl)
+        input("Press Enter to continue...")
+        return
 
 def perform_add_course():
     print("\n--- Add New Course ---")

@@ -54,7 +54,13 @@ def execute_query(query, params=None, fetch=False, commit=False):
             if commit:
                 conn.commit()
     except Exception as e:
+        try:
+            # Try to show the final query for easier debugging
+            final = cur.mogrify(query, params) if 'cur' in locals() and params is not None else query
+        except Exception:
+            final = query
         print(f"Database error: {e}")
+        print("Query:", final)
         conn.rollback()
     finally:
         conn.close()
