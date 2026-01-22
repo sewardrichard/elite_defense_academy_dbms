@@ -14,7 +14,11 @@ from src.controllers import (
     get_all_courses, add_course, update_course, delete_course, unenroll_student
 )
 from src.database import execute_query
-from src.reports import generate_roster_report, generate_attendance_report
+from src.reports import (
+    generate_roster_report,
+    generate_attendance_report,
+    generate_attrition_watchlist_report,
+)
 from src.utils import get_user_input, validate_email, validate_date, validate_score
 
 # Create a global console for rich output
@@ -278,7 +282,7 @@ def menu_student_management():
 
 def menu_reports():
     while True:
-        options = ["1. Student Roster", "2. Attendance Report", "q. Back"]
+        options = ["1. Student Roster", "2. Attendance Report", "3. Attrition Risk & Intervention Watchlist", "q. Back"]
         render_menu("Generate Reports", options)
         choice = input("Select Report: ").strip().lower()
         
@@ -303,6 +307,8 @@ def menu_reports():
             generate_roster_report(fmt.lower())
         elif choice == '2':
             generate_attendance_report(fmt.lower())
+        elif choice == '3':
+            generate_attrition_watchlist_report(fmt.lower())
         else:
             print("Invalid selection.")
             continue
