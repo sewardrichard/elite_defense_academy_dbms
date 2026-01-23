@@ -541,19 +541,45 @@ All operations (CRUD, reports) now execute against Render database.
 
 ---
 
-## Testing
+## Testing & Data Quality
 
-### Run Unit Tests
+Comprehensive testing strategy covering unit logic, integration flows, and data integrity.
+
+### 1. Test Suite Overview
+
+| Test Module | Coverage Area | Key Checks |
+|-------------|---------------|------------|
+| `tests/test_cli.py` | **Inserts & Input Validation** | • Email regex patterns<br>• Score ranges (0-100)<br>• Date formats (YYYY-MM-DD)<br>• Controller logic (Add Student, Enroll) |
+| `tests/test_sql_integrity.py` | **SQL Accuracy & Constraints** | • Referential integrity (Orphans)<br>• Duplicate enrollment prevention<br>• Invalid grades<br>• Unassigned students |
+| `tests/test_etl.py` | **ETL Pipeline Logic** | • Data cleaning (Title Case, Email Lowercase)<br>• GPA Calculation logic<br>• Attendance rate aggregation<br>• Standing determination |
+
+### 2. Validation Constraints
+
+The system enforces data quality at multiple levels:
+
+*   **Grade Ranges:**
+    *   *App Logic:* `validate_score()` ensures inputs are 0-100.
+    *   *Database:* `CHECK (score >= 0 AND score <= 100)` constraint.
+*   **Duplicate IDs:**
+    *   *App Logic:* Pre-check for existing emails/service numbers.
+    *   *Database:* `UNIQUE` indices on `email`, `service_number`, and `(student_id, course_id, start_date)`.
+*   **Date Formats:**
+    *   *App Logic:* `validate_date()` checks for `YYYY-MM-DD`.
+    *   *ETL:* Automatic standardization to ISO format during transform phase.
+
+### 3. Running Tests
+
+Execute the full suite to validate all system components:
 
 ```bash
 python -m unittest discover tests
 ```
 
-### Test Coverage
-
-- SQL integrity constraints (`tests/test_sql_integrity.py`)
-- CLI validation functions (`tests/test_cli.py`)
-- Database connection handling
+**Verify Data Integrity Manually:**
+Run the SQL verification script to check for anomalies in production data:
+```bash
+psql -d student_records_db -f tests/verify_data.sql
+```
 
 ---
 
