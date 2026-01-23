@@ -4,3 +4,4 @@ pandas==2.2.0
 openpyxl==3.1.2
 textual==0.79.1
 reportlab>=3.6.12
+rich>=13.0.0
