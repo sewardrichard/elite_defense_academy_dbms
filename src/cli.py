@@ -14,9 +14,14 @@ from src.controllers import (
     get_all_courses, add_course, update_course, delete_course, unenroll_student
 )
 from src.database import execute_query
-from src.reports import generate_official_transcript, generate_company_readiness_ledger
+from src.reports import (
+    generate_official_transcript,
+    generate_company_readiness_ledger,
+    generate_attrition_watchlist_report,
+    generate_course_grit_report,
+    generate_daily_muster_report,
+)
 from src.utils import get_user_input, validate_email, validate_date, validate_score
-
 # Create a global console for rich output
 console = Console()
 
