@@ -10,7 +10,7 @@
 \if :{?srms_user_pwd}
 \else
 \echo 'ERROR: Set -v srms_user_pwd=... when invoking psql.'
-\quit 1
+\quit
 \endif
 
 -- Create a single application user (password supplied at runtime)

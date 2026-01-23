@@ -218,25 +218,15 @@ def enroll_students(conn, student_ids, course_ids, dry_run=False):
     cursor = conn.cursor()
     print("Enrolling students & generating history...")
     count = 0
-    for sid in student_ids:
-        for cid in random.sample(course_ids, k=random.randint(3, 5)):
+    batch_size = 50  # Commit every N students to prevent timeout
+    
+    for idx, sid in enumerate(student_ids):
+        # Collect batch data for bulk inserts
+        grades_batch = []
+        attendance_batch = []
+        
+        for cid in random.sample(course_ids, k=3):  # Fixed 3 courses per student
             start = fake.date_between(start_date='-1y', end_date='-6m')
-            
-            # To avoid NULLs, we make all enrollments "Completed" or at least 
-            # have a status that implies non-null scores even if failed.
-            # "In Progress" would imply NULLs for completion_date.
-            # So we will force Completed/Failed/Withdrawn but all with dates.
-            
-            # 90% Completed/Failed, 10% Withdrawn
-            is_withdrawn = random.random() < 0.1
-            
-            if is_withdrawn:
-                 completion_date = start + timedelta(days=random.randint(10, 30))
-                 final_score = 0.0 # Or keep NULL? User said "no null values". 
-                 # Schema allows NULL for Withdrawn usually, but to strictly follow "No Nulls"...
-                 # We will set score to 0.0 and Grade to 'F' or None?
-                 # Let's just make everything "Completed" or "Failed" to be safe and logical.
-                 is_withdrawn = False # Override for simplicity of "No Nulls"
             
             # Force everything to be "done"
             completion_date = start + timedelta(days=random.randint(30, 90))
@@ -261,34 +251,43 @@ def enroll_students(conn, student_ids, course_ids, dry_run=False):
                 eid = cursor.fetchone()[0]
                 count += 1
                 
-                # Grades with Remarks
+                # Collect grades for batch insert
                 for atype, w in [('Quiz', 0.2), ('Assignment', 0.3), ('Exam', 0.5)]:
-                    # Generate some remarks to avoid NULLs
                     remark = fake_en.sentence(nb_words=6)
-                    cursor.execute(
-                        "INSERT INTO grades (enrollment_id, assessment_type, score, weight, remarks) VALUES (%s, %s, %s, %s, %s)",
-                        (eid, atype, round(random.uniform(60, 100), 2), w, remark)
-                    )
+                    grades_batch.append((eid, atype, round(random.uniform(60, 100), 2), w, remark))
                 
-                # Attendance with Remarks and Recorder
+                # Collect attendance for batch insert (reduced to 5 days)
                 curr = start
-                for _ in range(10):
+                for _ in range(5):
                     if curr > datetime.now().date(): break
                     att_status = random.choice(['Present', 'Present', 'Absent', 'Late'])
                     remark = "On time" if att_status == 'Present' else fake_en.sentence(nb_words=3)
                     recorded_by = "Sgt. " + fake.last_name()
-                    
-                    cursor.execute(
-                        """
-                        INSERT INTO attendance (student_id, course_id, muster_date, status, remarks, recorded_by) 
-                        VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING
-                        """,
-                        (sid, cid, curr, att_status, remark, recorded_by)
-                    )
+                    attendance_batch.append((sid, cid, curr, att_status, remark, recorded_by))
                     curr += timedelta(days=1)
-            except Exception:
+            except Exception as e:
                 conn.rollback()
                 continue
+        
+        # Batch insert grades
+        if grades_batch:
+            cursor.executemany(
+                "INSERT INTO grades (enrollment_id, assessment_type, score, weight, remarks) VALUES (%s, %s, %s, %s, %s)",
+                grades_batch
+            )
+        
+        # Batch insert attendance
+        if attendance_batch:
+            cursor.executemany(
+                "INSERT INTO attendance (student_id, course_id, muster_date, status, remarks, recorded_by) VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
+                attendance_batch
+            )
+        
+        # Commit every batch_size students to prevent connection timeout
+        if (idx + 1) % batch_size == 0:
+            conn.commit()
+            print(f"  Progress: {idx + 1}/{len(student_ids)} students processed...")
+    
     conn.commit()
     print(f"Created {count} enrollments.")
 
@@ -369,9 +368,9 @@ def main():
         if args.clean and not args.dry_run:
             clear_data(conn)
         
-        c_ids = generate_companies(conn, dry_run=args.dry_run)
-        s_ids = generate_students(conn, c_ids, dry_run=args.dry_run)
-        course_ids = generate_courses(conn, dry_run=args.dry_run)
+        c_ids = generate_companies(conn, n=5, dry_run=args.dry_run)
+        s_ids = generate_students(conn, c_ids, n=100, dry_run=args.dry_run)  # 100 students
+        course_ids = generate_courses(conn, n=20, dry_run=args.dry_run)  # 20 courses
         
         if s_ids and course_ids:
             enroll_students(conn, s_ids, course_ids, dry_run=args.dry_run)

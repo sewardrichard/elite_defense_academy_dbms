@@ -1,82 +1,82 @@
 [
     {
-        "course_code": "MED-892",
-        "course_title": "Medical Illo Fundamentals",
-        "department": "Medical",
-        "credits": 2,
-        "difficulty": "Intermediate",
-        "description": "Molestias voluptatem occaecati corrupti excepturi ad quae nulla ipsa."
-    },
-    {
-        "course_code": "AVI-941",
-        "course_title": "Aviation Omnis Fundamentals",
-        "department": "Aviation",
-        "credits": 3,
-        "difficulty": "Basic",
-        "description": "Sapiente sit in reprehenderit amet quasi maiores tempora nisi."
-    },
-    {
-        "course_code": "CYB-807",
-        "course_title": "Cybersecurity Vitae Fundamentals",
+        "course_code": "CYB-902",
+        "course_title": "Cybersecurity Temporibus Fundamentals",
         "department": "Cybersecurity",
         "credits": 4,
         "difficulty": "Intermediate",
-        "description": "Perspiciatis facere molestias optio aliquid itaque optio beatae."
+        "description": "Neque cupiditate adipisci et eveniet consequatur occaecati."
     },
     {
-        "course_code": "AVI-907",
-        "course_title": "Aviation Reprehenderit Fundamentals",
+        "course_code": "AVI-814",
+        "course_title": "Aviation Voluptate Fundamentals",
         "department": "Aviation",
         "credits": 3,
         "difficulty": "Basic",
-        "description": "Perferendis veniam commodi blanditiis ab dolor nobis fugiat consectetur deleniti eos voluptatem ipsum."
+        "description": "Est consectetur optio magni tenetur nisi."
     },
     {
-        "course_code": "AVI-886",
-        "course_title": "Aviation Sit Fundamentals",
-        "department": "Aviation",
+        "course_code": "CYB-846",
+        "course_title": "Cybersecurity Incidunt Fundamentals",
+        "department": "Cybersecurity",
         "credits": 2,
-        "difficulty": "Intermediate",
-        "description": "Distinctio doloremque perspiciatis recusandae eaque voluptatibus rerum optio ratione."
+        "difficulty": "Basic",
+        "description": "Quam neque perspiciatis ipsa quaerat quas."
     },
     {
-        "course_code": "LOG-899",
-        "course_title": "Logistics Fugiat Fundamentals",
-        "department": "Logistics",
-        "credits": 2,
+        "course_code": "CYB-831",
+        "course_title": "Cybersecurity Eveniet Fundamentals",
+        "department": "Cybersecurity",
+        "credits": 3,
         "difficulty": "Intermediate",
-        "description": "Quis deleniti maxime amet nobis nostrum repellat excepturi asperiores adipisci."
+        "description": "Cum et beatae suscipit voluptatibus dicta minus."
     },
     {
-        "course_code": "AVI-933",
-        "course_title": "Aviation At Fundamentals",
-        "department": "Aviation",
+        "course_code": "CYB-989",
+        "course_title": "Cybersecurity Corrupti Fundamentals",
+        "department": "Cybersecurity",
         "credits": 4,
         "difficulty": "Basic",
-        "description": "Quam officia dolores eligendi perferendis magnam dolore recusandae provident sapiente libero."
+        "description": "Eos autem illum saepe neque ullam adipisci eaque impedit fugit."
     },
     {
-        "course_code": "MED-887",
-        "course_title": "Medical Eligendi Fundamentals",
-        "department": "Medical",
+        "course_code": "CYB-837",
+        "course_title": "Cybersecurity Impedit Fundamentals",
+        "department": "Cybersecurity",
         "credits": 2,
         "difficulty": "Intermediate",
-        "description": "Beatae porro iure alias qui odio ex."
+        "description": "Eius eveniet maxime fugit repudiandae nobis optio ipsam eveniet nemo."
     },
     {
-        "course_code": "LOG-870",
-        "course_title": "Logistics Beatae Fundamentals",
+        "course_code": "LOG-935",
+        "course_title": "Logistics Exercitationem Fundamentals",
         "department": "Logistics",
-        "credits": 2,
-        "difficulty": "Basic",
-        "description": "Nemo cum quas at dolores ea aliquam rem pariatur optio atque adipisci voluptatibus."
+        "credits": 3,
+        "difficulty": "Intermediate",
+        "description": "Provident porro aut totam rerum veniam."
     },
     {
-        "course_code": "AVI-804",
-        "course_title": "Aviation Corporis Fundamentals",
-        "department": "Aviation",
-        "credits": 2,
+        "course_code": "MED-993",
+        "course_title": "Medical Illo Fundamentals",
+        "department": "Medical",
+        "credits": 4,
         "difficulty": "Basic",
-        "description": "Quaerat laborum amet voluptates provident modi dolore at."
+        "description": "Recusandae incidunt ipsum eveniet molestiae aperiam fuga velit dolorem beatae quas architecto."
+    },
+    {
+        "course_code": "LOG-947",
+        "course_title": "Logistics Deleniti Fundamentals",
+        "department": "Logistics",
+        "credits": 3,
+        "difficulty": "Basic",
+        "description": "Facere nulla natus minus aspernatur voluptas esse iste alias ipsa assumenda."
+    },
+    {
+        "course_code": "AVI-923",
+        "course_title": "Aviation Quam Fundamentals",
+        "department": "Aviation",
+        "credits": 4,
+        "difficulty": "Intermediate",
+        "description": "Ipsa consequuntur sed vero fugiat ad quod repudiandae dolorem aliquam illo aspernatur."
     }
 ]
