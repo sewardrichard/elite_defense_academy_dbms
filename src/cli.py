@@ -18,6 +18,8 @@ from src.reports import (
     generate_roster_report,
     generate_attendance_report,
     generate_attrition_watchlist_report,
+    generate_course_grit_report,
+    generate_daily_muster_report,
 )
 from src.utils import get_user_input, validate_email, validate_date, validate_score
 
@@ -282,7 +284,14 @@ def menu_student_management():
 
 def menu_reports():
     while True:
-        options = ["1. Student Roster", "2. Attendance Report", "3. Attrition Risk & Intervention Watchlist", "q. Back"]
+        options = [
+            "1. Student Roster",
+            "2. Attendance Report",
+            "3. Attrition Risk & Intervention Watchlist",
+            "4. Course Grit & Grade Distribution Analysis",
+            "5. Daily Muster (Attendance) Accountability Report",
+            "q. Back",
+        ]
         render_menu("Generate Reports", options)
         choice = input("Select Report: ").strip().lower()
         
@@ -309,6 +318,10 @@ def menu_reports():
             generate_attendance_report(fmt.lower())
         elif choice == '3':
             generate_attrition_watchlist_report(fmt.lower())
+        elif choice == '4':
+            generate_course_grit_report(fmt.lower())
+        elif choice == '5':
+            generate_daily_muster_report(fmt.lower())
         else:
             print("Invalid selection.")
             continue
